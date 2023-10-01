@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # STM32定时器简介之基本定时器
 
 ### 一、基本定时器
@@ -89,3 +90,96 @@ Tout = （4999+1）*（7199+1）/72 = 500000
 
 * 相关HAL库函数介绍：
        ![image-20230923193205083](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202309232056572.png)
+=======
+# STM32定时器简介之基本定时器
+
+### 一、基本定时器
+
+#### 1.1 TIM6/TIM7
+
+* 主要特性
+
+   1）16位**递增**计数器，计数值0~65535
+
+   2）16位预分频器，分频系数1~65536
+
+   3）在计数器溢出（更新事件）时，可产生中断/DMA请求
+
+* 溢出条件：CNT计数器 == ARR（影子）
+  ``影子寄存器是实际起作用的寄存器，不可直接访问.``
+
+  ![image-20230930163102670](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202309302149191.png)![image-20230930163131134](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202309302149193.png)
+  
+
+#### 1.2 STM32定时器的**预装载值**和**预分频系数**（PSC）的确定
+
+* 根据定时器时钟的频率，比如时钟的频率是72MHZ，可以理解为一秒钟STM32会自己数72M次，预分频系数就是将频率分割，比如预分频系数是72，则该时钟的频率会变成72MHZ/72=1MHZ（设置时要注意，数值应为72-1）。想对时钟源进行72分频，那么预分频器的值就应该设置为71（因为达到最大值后还要再tick一次才归零）。假定分频系数是72-1，那么频率变成1MHZ，也就意味着STM32在一秒钟会数1M次，即1us数一次。而后确定预装载值，比如需要定时1ms，由于1ms=1us*1000，那么预装载值就是1000-1（预装载值减一是因为重装需要一个时钟周期）。以此类推，在预分频系数确定的情况下，可以由预装载值确定定时的时长。
+
+#### 1.3 定时器时间计算公式
+
+```text
+Tout=((ARR+1)*(PSC+1))/Tclk
+```
+
+* Tout：TIM溢出时间 单位 us
+  ARR：重装载值
+  PSC：预分频系数
+  Tclk（$F_t$） ： TIM 输入时钟频率 （MHZ）
+
+* 例 ：
+
+```c
+TIM_TimeBaseStructure.TIM_ClockDivision  =  TIM_CKD_DIV1; 
+TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+TIM_TimeBaseStructure.TIM_Period = 4999;		//自动装载值
+TIM_TimeBaseStructure.TIM_Prescaler =7199;		//预分频值
+```
+
+Tout = （4999+1）*（7199+1）/72 = 500000
+= 500 ms
+
+#### 1.4基本定时器中断实验配置步骤
+
+* 1. 配置定时器基础工作参数
+
+     ```c
+     HAL_TIM_Base_Init()
+     ```
+
+  2. 定时器基础MSP初始化
+
+     ```c
+     HAL_TIM_Base_Msplnit()//配置NVIC、GPIO、CLOCK等，本身是一个空函数，用于存放相关的初始化代码
+     ```
+
+     * MSP：与MCU相关的初始化
+     * NVIC：Nested vectoredinterrupt controller，即嵌套向量中断控制器，控制着整个STM32芯片中断相关的功能，与Cortex-M3 内核紧密联系，是内核中的一个外设。
+
+  3. 使能更新中断并启动计数器
+
+     ```C
+     HAL_TIM_Base_IT()
+     ```
+
+  4. 设置优先级，使能中断
+
+     ```c
+     HAL_NVIC_SetPriority()
+     HAL_NVIC_EnableIRQ()
+     ```
+
+  5. 编写中断服务函数
+
+     ```c
+     TIMx_IRQHandler()
+     ```
+
+  6. 编写定时器更新中断回调函数
+
+     ```c
+     HAL_TIM_PeriodElapsedCallback()//空函数，需要自行定义 
+     ```
+
+* 相关HAL库函数介绍：
+       ![image-20230923193205083](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202309232056572.png)
+>>>>>>> 3671b37344318042d5db5031a4a4075ad2f4af9c
