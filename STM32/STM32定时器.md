@@ -148,10 +148,5 @@ Tout = （4999+1）*（7199+1）/72 = 500000
 
 ![image-20231001211647763](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202310012206764.png)
 
-【【STM32入门教程-2023】第15集 超清晰STM32时钟树动画讲解】 https://www.bilibili.com/video/BV1ph4y1e7Ey/?share_source=copy_web&vd_source=5268a7bf868ecf913cd7fb51a00205a5
-
-【如何使用stm32单片机的定时器】 https://www.bilibili.com/video/BV15S4y1g7WT/?share_source=copy_web&vd_source=5268a7bf868ecf913cd7fb51a00205a5
-
-STM32时钟系统中的SysTick、FCLK、SYSCLK、PCLK和HCLK - SugarlesS的文章 - 知乎 https://zhuanlan.zhihu.com/p/376894689
 =======
 >>>>>>> 9d86d960c26e08e74c99fa8e957be20c5ca5d433
