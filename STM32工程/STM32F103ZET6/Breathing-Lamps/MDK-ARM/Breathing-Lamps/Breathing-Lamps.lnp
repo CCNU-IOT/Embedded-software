@@ -1,0 +1,26 @@
+--cpu Cortex-M3
+"breathing-lamps\startup_stm32f103xe.o"
+"breathing-lamps\main.o"
+"breathing-lamps\gpio.o"
+"breathing-lamps\stm32f1xx_it.o"
+"breathing-lamps\stm32f1xx_hal_msp.o"
+"breathing-lamps\stm32f1xx_hal_gpio_ex.o"
+"breathing-lamps\stm32f1xx_hal_tim.o"
+"breathing-lamps\stm32f1xx_hal_tim_ex.o"
+"breathing-lamps\stm32f1xx_hal.o"
+"breathing-lamps\stm32f1xx_hal_rcc.o"
+"breathing-lamps\stm32f1xx_hal_rcc_ex.o"
+"breathing-lamps\stm32f1xx_hal_gpio.o"
+"breathing-lamps\stm32f1xx_hal_dma.o"
+"breathing-lamps\stm32f1xx_hal_cortex.o"
+"breathing-lamps\stm32f1xx_hal_pwr.o"
+"breathing-lamps\stm32f1xx_hal_flash.o"
+"breathing-lamps\stm32f1xx_hal_flash_ex.o"
+"breathing-lamps\stm32f1xx_hal_exti.o"
+"breathing-lamps\system_stm32f1xx.o"
+"breathing-lamps\led.o"
+"breathing-lamps\pwm.o"
+--strict --scatter "Breathing-Lamps\Breathing-Lamps.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Breathing-Lamps.map" -o Breathing-Lamps\Breathing-Lamps.axf
