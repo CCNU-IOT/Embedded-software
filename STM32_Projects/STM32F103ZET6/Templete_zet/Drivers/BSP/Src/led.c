@@ -34,7 +34,7 @@ void led_set_status(GPIO_TypeDef *gpiox, LED_Status status)
 }
 void breath_led_init(void)
 {
-    pwm_init();
+    breath_led_pwm_init();
 }
 void breath_led_brightness(Breath_LED_Direction *direction, uint32_t *duty)
 {
@@ -43,9 +43,9 @@ void breath_led_brightness(Breath_LED_Direction *direction, uint32_t *duty)
     else if (*direction == Breath_Negative)
       (*duty)--;
 
-    if (*duty >= PWM_GENERAL_TIM_ARR)
+    if (*duty >= BREATH_LED_PWM_GENERAL_TIM_ARR)
       *direction = Breath_Negative; 
     else if (!(*duty))
       *direction = Breath_Positive; 
-    __HAL_TIM_SET_COMPARE(&pwm_time_handle, PWM_GRNERAL_TIM_CHANNEL2, *duty);
+    __HAL_TIM_SET_COMPARE(&breath_led_pwm_time_handle, BREATH_LED_PWM_GRNERAL_TIM_CHANNEL2, *duty);
 }
