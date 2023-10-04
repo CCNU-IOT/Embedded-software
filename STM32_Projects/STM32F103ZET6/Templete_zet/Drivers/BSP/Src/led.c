@@ -36,16 +36,35 @@ void breath_led_init(void)
 {
     pwm_init();
 }
+
+/**
+  * @brief  Set the TIM Capture Compare Register value on runtime without calling another time ConfigChannel function.
+  * @param  __HANDLE__ TIM handle.
+  * @param  __CHANNEL__ TIM Channels to be configured.
+  *          This parameter can be one of the following values:
+  *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
+  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+  *            @arg TIM_CHANNEL_3: TIM Channel 3 selected
+  *            @arg TIM_CHANNEL_4: TIM Channel 4 selected
+  * @param  __COMPARE__ specifies the Capture Compare register new value.
+  * @retval None
+  */
 void breath_led_brightness(Breath_LED_Direction *direction, uint32_t *duty)
 {
+    // 如果呼吸方向为正向（Breath_Positive），则增加占空比
     if (*direction == Breath_Positive)
-      (*duty)++;
+        (*duty)++;
+    // 如果呼吸方向为负向（Breath_Negative），则减小占空比
     else if (*direction == Breath_Negative)
-      (*duty)--;
+        (*duty)--;
+    
+	// 如果占空比超过了一个阈值（PWM_GENERAL_TIM_ARR），则将呼吸方向设置为负向
+	if (*duty >= PWM_GENERAL_TIM_ARR)
+  		*direction = Breath_Negative;
+	// 如果占空比为零，则将呼吸方向设置为正向
+	else if (!(*duty))
+   		*direction = Breath_Positive;
 
-    if (*duty >= PWM_GENERAL_TIM_ARR)
-      *direction = Breath_Negative; 
-    else if (!(*duty))
-      *direction = Breath_Positive; 
-    __HAL_TIM_SET_COMPARE(&pwm_time_handle, PWM_GRNERAL_TIM_CHANNEL2, *duty);
+	// 使用HAL库函数设置PWM的比较值，以控制LED的亮度
+	__HAL_TIM_SET_COMPARE(&pwm_time_handle, PWM_GRNERAL_TIM_CHANNEL2, *duty);
 }
