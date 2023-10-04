@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -74,6 +75,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   breath_led_init();
+  bcd_motor_init();
   /* USER CODE END Init */
 
   /* Configure the system clock */

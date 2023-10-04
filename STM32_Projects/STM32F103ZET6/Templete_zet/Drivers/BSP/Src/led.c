@@ -34,7 +34,7 @@ void led_set_status(GPIO_TypeDef *gpiox, LED_Status status)
 }
 void breath_led_init(void)
 {
-    pwm_init();
+    breath_led_pwm_init();
 }
 
 /**
@@ -56,15 +56,11 @@ void breath_led_brightness(Breath_LED_Direction *direction, uint32_t *duty)
         (*duty)++;
     // 如果呼吸方向为负向（Breath_Negative），则减小占空比
     else if (*direction == Breath_Negative)
-        (*duty)--;
-    
-	// 如果占空比超过了一个阈值（PWM_GENERAL_TIM_ARR），则将呼吸方向设置为负向
-	if (*duty >= PWM_GENERAL_TIM_ARR)
-  		*direction = Breath_Negative;
-	// 如果占空比为零，则将呼吸方向设置为正向
-	else if (!(*duty))
-   		*direction = Breath_Positive;
+      (*duty)--;
 
-	// 使用HAL库函数设置PWM的比较值，以控制LED的亮度
-	__HAL_TIM_SET_COMPARE(&pwm_time_handle, PWM_GRNERAL_TIM_CHANNEL2, *duty);
+    if (*duty >= BREATH_LED_PWM_GENERAL_TIM_ARR)
+      *direction = Breath_Negative; 
+    else if (!(*duty))
+      *direction = Breath_Positive; 
+    __HAL_TIM_SET_COMPARE(&breath_led_pwm_time_handle, BREATH_LED_PWM_GRNERAL_TIM_CHANNEL2, *duty);
 }
