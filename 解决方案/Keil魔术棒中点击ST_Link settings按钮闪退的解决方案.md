@@ -6,6 +6,6 @@
 
 解决办法：使用旧版STLinkUSBDriver.dll替换现有STLinkUSBDriver.dll
 
-
+旧版STLinkUSBDriver.dll见仓库同目录下文件夹。或：[下载链接](https://documentation-service.arm.com/static/6391bb322b0dd145f803165d?token=)
 
 注：STLinkUSBDriver.dll可能在D:\Keil_v5\ARM\STLink目录
