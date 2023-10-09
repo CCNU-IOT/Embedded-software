@@ -82,8 +82,8 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim)
         HAL_NVIC_EnableIRQ(TIM4_IRQn);//将更新中断的入口在NVIC处使能    
 
         /*开启编码器接口通道*/
-        HAL_TIM_Encoder_Start(&encoder_tim_init_struct, ENCODER_GENERAL_TIM_CHANNEL_1);
-        HAL_TIM_Encoder_Start(&encoder_tim_init_struct, ENCODER_GENERAL_TIM_CHANNEL_2);
+        HAL_TIM_Encoder_Start(&encoder_general_tim_handle, ENCODER_GENERAL_TIM_CHANNEL_1);
+        HAL_TIM_Encoder_Start(&encoder_general_tim_handle, ENCODER_GENERAL_TIM_CHANNEL_2);
 
         /*使能编码器接口对应定时器的更新中断*/
         __HAL_TIM_CLEAR_FLAG(&encoder_general_tim_handle,TIM_IT_UPDATE);//避免上一次的更新中断标志位没有清除，先清除更新中断标志位
@@ -109,9 +109,10 @@ void TIM4_IRQHandler(void)
 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {  
+    int32_t encode_num_now = 0;
      if (htim->Instance == ENCODER_BASE_TIM)
      {
-        int32_t encode_num_now = encoder_tim_get_encode_num();/*获取当前编码器的数值*/
+        encode_num_now = encoder_tim_get_encode_num();/*获取当前编码器的数值*/
         calculate_bcd_speed(encode_num_now);/*根据编码器的数值计算电机速度*/
      }
      else if (htim->Instance == ENCODER_GENERAL_TIM)
@@ -183,7 +184,7 @@ void meger_sort(float array[], uint8_t start, uint8_t tail)
         meger_sort(array, start, mid);
         meger_sort(array, mid + 1, tail);
         meger(array, asso_array, start, mid, tail);
-        for (i = start, i <= tail, i++)
+        for (i = start; i <= tail; i++)
             array[i] = asso_array[i];
     }
 }

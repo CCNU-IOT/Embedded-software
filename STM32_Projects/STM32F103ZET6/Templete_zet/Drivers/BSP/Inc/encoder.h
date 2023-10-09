@@ -26,5 +26,13 @@ typedef struct
 #define ENCODER_BASE_TIM_PSC                                    (72U - 1U)/*1MHz <---> 1us*/
 #define ENCODER_BASE_TIM_ARR                                    (1000U - 1U) /*1KHz <---> 1ms*/
 
+void encoder_base_tim_init(void);
+void bcd_encoder_init(void);
+int32_t encoder_tim_get_encode_num(void);
+void calculate_bcd_speed(int32_t encode_num_now);
+void meger_sort(float array[], uint8_t start, uint8_t tail);
+void meger(float array[], float asso_array[], uint8_t start, uint8_t mid, uint8_t tail);
+float first_order_low_pass_filter(float motor_speed_now, float motor_speed_old);
+
 extern Encoder_InitTypeDef encoder_init_struct;
 #endif

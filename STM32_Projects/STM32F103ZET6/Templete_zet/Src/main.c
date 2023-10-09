@@ -74,7 +74,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  breath_led_init();
+  //breath_led_init();
   bcd_motor_init();
   /* USER CODE END Init */
 
@@ -88,8 +88,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uint32_t duty = 0;
-  Breath_LED_Direction breath_dir = Breath_Positive;
+  //uint32_t duty = 0;
+  //Breath_LED_Direction breath_dir = Breath_Positive;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -97,8 +97,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    breath_led_brightness(&breath_dir, &duty);
-    HAL_Delay(10);
+    //breath_led_brightness(&breath_dir, &duty);
+    //HAL_Delay(10);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

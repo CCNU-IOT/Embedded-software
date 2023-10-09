@@ -514,6 +514,16 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\Src\motor.c</FilePath>
             </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\encoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\tim.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
