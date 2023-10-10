@@ -58,3 +58,24 @@
   - ![image-20231010215754084](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231010215754084.png)
     - 常见的电平转换芯片是：**CH340C**......
     - 为了在**PC机**上能够正常通信，需要安装**CH340驱动**(目的是挂载**CH340芯片**的信息)。
+    - 虽然将**RS-232接口**换成了**USB接口**，但依旧是**串行通信**，即支持**异步启停**编码格式。
+    - <img src="https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/OIP.jpeg" alt="OIP" style="zoom: 67%;" />
+
+## 2.USART：
+
+#### 2.1 USART/UART介绍：
+
+- **USART——Universal Synchronous Asynchronous Receiver Transmitter**，通用同步异步收发器。
+- **UART——Universal Asynchronous Receiver/Transmitter**，通用异步收发器。
+
+- **USART**相较于**UART**多了**同步**功能，我们使用的通信协议一般是**异步启停**，因此使用**UART**即可。
+- **USART/UART**是计算机体系结构中的一部分，用于连接**串行通信接口**(也就是串口)，通常作为微处理器的**外围设备(peripheral)**，**USART/UART**的接口通常与**MAX232/CH340**等电平转换芯片相连，**USART/UART**作为微处理器**对外通信**的接口。
+
+- <img src="https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/UART_8250_Microchip.jpg" alt="UART_8250_Microchip" style="zoom: 33%;" />
+  - 上图是**美国国家半导体**设计的**UART-8250**芯片。
+
+#### 2.2 STM32F103的U(S)ART：
+
+- **STM32F103**有五个**U(S)ART**，其中三个**USART(兼容UART)**，两个**UART**。
+  - 参考STM32选型手册。
+
