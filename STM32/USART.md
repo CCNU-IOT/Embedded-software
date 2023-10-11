@@ -74,8 +74,23 @@
 - <img src="https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/UART_8250_Microchip.jpg" alt="UART_8250_Microchip" style="zoom: 33%;" />
   - 上图是**美国国家半导体**设计的**UART-8250**芯片。
 
-#### 2.2 STM32F103的U(S)ART：
+#### 2.2 STM32F103的U(S)ART简介：
 
 - **STM32F103**有五个**U(S)ART**，其中三个**USART(兼容UART)**，两个**UART**。
-  - 参考STM32选型手册。
+  - 参考：[STM32选型手册](https://static.stmcu.com.cn/upload/Selection_Guide.pdf)
+  - ![image-20231011203633080](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231011203633080.png)
+- **U(S)ART主要特征**：
+  - 参考：**STM32F10x英文参考手册**
+    - ![image-20231011204545340](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231011204545340.png)
+    - 支持**全双工异步**通信
+    - 支持**单线半双工**通信
+    - 具有单独的**发送器使能位**和**接收器使能位**
+    - 可配置使用**DMA**
+    - 可配置使用**中断**
 
+
+#### 2.3 STM32F103U(S)ART结构框图：
+
+- ![image-20230909151604790](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20230909151604790.png)
+- **第一部分——外部引脚**:dancers:：
+  - 
