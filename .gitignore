@@ -17,7 +17,8 @@
 *.d
 *.axf
 *.tra
-*.dep           
+*.dep    
+*.null       
 JLinkLog.txt
 
 *.iex
