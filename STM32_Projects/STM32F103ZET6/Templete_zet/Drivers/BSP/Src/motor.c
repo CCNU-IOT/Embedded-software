@@ -1,7 +1,9 @@
 #include "motor.h"
-
+BCD_MOTOR_InitTypeDef bcd_motor_init_struct;
 void bcd_motor_init(void)
 {
+    bcd_motor_init_struct.speed = 0.00;
+    bcd_motor_init_struct.reduction_ratio = 30;
     GPIO_InitTypeDef gpio_init_struct;//创建GPIO初始化结构体
     __HAL_RCC_GPIOG_CLK_ENABLE();//TIM4->all_Channel对应GPIOB，开启GPIOB时钟
 

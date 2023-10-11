@@ -547,8 +547,13 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\Drivers\BSP\Src\btim.c</PathWithFileName>
       <FilenameWithoutPath>btim.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\Drivers\BSP\Src\encoder.c</PathWithFileName>
+      <FilenameWithoutPath>encoder.c</FilenameWithoutPath>
+>>>>>>> d15138f52d837018c13e444506cfb31a0dcda7be
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -559,8 +564,13 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\Drivers\BSP\Src\key.c</PathWithFileName>
       <FilenameWithoutPath>key.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\Drivers\BSP\Src\tim.c</PathWithFileName>
+      <FilenameWithoutPath>tim.c</FilenameWithoutPath>
+>>>>>>> d15138f52d837018c13e444506cfb31a0dcda7be
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

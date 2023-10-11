@@ -515,6 +515,7 @@
               <FilePath>..\Drivers\BSP\Src\motor.c</FilePath>
             </File>
             <File>
+<<<<<<< HEAD
               <FileName>btim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\Src\btim.c</FilePath>
@@ -523,6 +524,16 @@
               <FileName>key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\Src\key.c</FilePath>
+=======
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\encoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\tim.c</FilePath>
+>>>>>>> d15138f52d837018c13e444506cfb31a0dcda7be
             </File>
           </Files>
         </Group>

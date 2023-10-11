@@ -76,7 +76,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  breath_led_init();
+  //breath_led_init();
   bcd_motor_init();
   led_init();
   key_init();
@@ -93,8 +93,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uint32_t duty = 0;
-  Breath_LED_Direction breath_dir = Breath_Positive;
+  //uint32_t duty = 0;
+  //Breath_LED_Direction breath_dir = Breath_Positive;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,6 +102,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+<<<<<<< HEAD
     switch(key_scan())
     {
       case KEY0_PRESSED_SHORT://¶Ì°´KEY0£¬LEDºôÎüµÆ
@@ -131,6 +132,10 @@ int main(void)
     }
     //   breath_led_brightness(&breath_dir, &duty);
     //   HAL_Delay(5);
+=======
+    //breath_led_brightness(&breath_dir, &duty);
+    //HAL_Delay(10);
+>>>>>>> d15138f52d837018c13e444506cfb31a0dcda7be
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
