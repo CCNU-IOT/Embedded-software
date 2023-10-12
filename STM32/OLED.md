@@ -6,7 +6,7 @@
 
 * 特点：具备自发光(不需背光源)、对比度高、厚度薄、视角广、反应速度快、功耗低、柔性好。
 
-* ![R-C](OLED.assets/LCD&OLED.jpg)
+* ![R-C](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202310121657639.jpg)
 
 * 常见的OLED都是基于芯片SSD1306的显示屏，一般为0.96inch，分辨率为128x64（即：一行有128个像素点，一列有64个像素点）。这些像素点都连接到SSD1306芯片的输出端上，而这些输出由SSD1306内部的GDDRAM（Graphic Display Data RAM）中数据决定。该RAM的大小为1024字节，对应8192个像素点。
 
