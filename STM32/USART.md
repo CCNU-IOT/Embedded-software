@@ -105,7 +105,7 @@
     - 硬件数据流控引脚，和同步控制有关，如果使用异步控制，不需要配置。
   - **SCLK**：
     - 同步控制时钟引脚。
-  
+
 - **第二部分——数据寄存器**:face_with_head_bandage:：
   - **UART发送数据通路**：
     - **PWDATA**是UART的**写总线**，**PWDATA总线**可以通过**CPU或者DMA**的方式写入数据，总线上的数据会被直接写入到**数据寄存器DR**中(**发送数据寄存器TDR**对用户不可见)。
@@ -117,7 +117,7 @@
     - **接收移位寄存器**受到**时钟**控制，移位接受**IrDASIR编码器模块**中的数据，接收到**一定位数**的数据之后，接受移位寄存器将数据发送到**接收数据寄存器RDR**。
     - **接收数据寄存器RDR**(对用户不可见)将数据发送到**数据寄存器DR**中。
     - 可以通过**CPU或DMA**的方式通过**PRDATA总线**从数据寄存器**DR**中读取数据。
-  
+
 - **第三部分——寄存器控制单元**:ballot_box:：
   - **发送器控制单元**：
     - **发送器控制单元**能够通过**寄存器**的相应值产生**发送器控制信号**，控制发送器的发送逻辑。
@@ -150,13 +150,13 @@
       - **当TCIE使能时**：
         - **0**：**发送移位寄存器**还没有将数据发送完成，或者**USART_TDR寄存器**中存有数据，此时不能向**USART_DR**中写入数据。
         - 1：**发送移位寄存器**和**USART_TDR**中都没有数据，此时发送完成，可以向**USART_DR**中写入数据，并且**产生中断**。
-  
+
 - **第四部分——波特率发生器**:lantern:：
-  
+
   - **波特率**的计算公式：
-  
+
     - $baud = \frac{f_{ck}}{16 * USARTDIV}$
-  
+
       - $f_{ck}$：
         - **U(S)ART**输入时钟的**时钟频率**，我们可以查看**STM32F1**的**系统结构图**：
         - ![image-20231012143932672](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231012143932672.png)
@@ -169,26 +169,26 @@
           - 频率：**1s内，时钟周期的周期数量**:eagle:。
         - 如果波特率为**9600baud**，就需要让**发送器/接收器**的时钟频率是**9.6KHz**。
     - $USARTDIV = {DIVMantissa} + DIVFraction/16$：
-  
+
       - 假设使用**USART1**，并且波特率选择**9600baud**，那么根据波特率计算公式，**USARTDIV = 468.75**。
-  
+
       - 如何设置**USARTDIV**的值？通过**USART_BRR寄存器**:key:。
-  
+
       - ![image-20231012152854008](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231012152854008.png)
-  
+
       - **USART_BRR**寄存器是**32位**寄存器，**[31:16]位**保留，**[15:0]位**使用：
-  
+
         - **[15:4]位存储USARTDIV的整数部分**：
-  
+
           - ```c
             /*存储过程*/
             uint16_t mantissa = 468;
             USART_BRR = mantissa << 4;
             //mantissa使用[15:4]位域，由于mantissa是16位，因此左移4位，将低4位用0占位。
             ```
-  
+
         - **[3:0]位存储USARTDIV的小数部分**：
-  
+
           - ```c
             /*存储过程*/
             uint16_t fraction = (0.75 * 16 + 0.5);
@@ -203,9 +203,9 @@
             /*放入寄存器*/
             //12对应的16进制数是0x000C,因此直接加到寄存器中没有任何问题。
             ```
-  
+
         - **USART_BRR的计算公式**：
-  
+
           - `USART_BRR = 468 << 4 + (0.75 * 16 + 0.5)`
             - 其中，**左移4位**和**乘16**意义相同。
           - `USART_BRR = (468 + 0.75) * 16 + 0.5`
@@ -214,7 +214,83 @@
             - 带入$baud = \frac{f_{ck}}{16 * USARTDIV}$
           - `USART_BRR = fck / baud + 0.5 `
   - 虽然我们推导了波特率的计算，但在使用**HAL库**的过程中，只需要简单配置即可:ok_man:。
-  
+
     - 纯纯傻:dog2:。
-  
-  - 
+
+## 3.STM32的USART驱动代码：
+
+- 以**UART**为例，如果不使用同步通信的话，我们只需要使用**UART系列HAL函数**，**USART**和**UART**都可以被配置。
+
+#### 3.1 创建UART句柄结构体：
+
+- `UART_HandleTypeDef uart_debug_handle;`
+
+  - 我们这里以**USART1**为例，**USART1**通常作为和**上位机**的**调试串口**:taco:。
+
+  - ```c
+    typedef struct __UART_HandleTypeDef
+    {
+      USART_TypeDef                 *Instance;        /*!< UART registers base address        */
+    
+      UART_InitTypeDef              Init;             /*!< UART communication parameters      */
+    
+      const uint8_t                 *pTxBuffPtr;      /*!< Pointer to UART Tx transfer Buffer */
+    
+      uint16_t                      TxXferSize;       /*!< UART Tx Transfer size              */
+    
+      __IO uint16_t                 TxXferCount;      /*!< UART Tx Transfer Counter           */
+    
+      uint8_t                       *pRxBuffPtr;      /*!< Pointer to UART Rx transfer Buffer */
+    
+      uint16_t                      RxXferSize;       /*!< UART Rx Transfer size              */
+    
+      __IO uint16_t                 RxXferCount;      /*!< UART Rx Transfer Counter           */
+    
+      __IO HAL_UART_RxTypeTypeDef ReceptionType;      /*!< Type of ongoing reception          */
+    
+      __IO HAL_UART_RxEventTypeTypeDef RxEventType;   /*!< Type of Rx Event                   */
+    
+      DMA_HandleTypeDef             *hdmatx;          /*!< UART Tx DMA Handle parameters      */
+    
+      DMA_HandleTypeDef             *hdmarx;          /*!< UART Rx DMA Handle parameters      */
+    
+      HAL_LockTypeDef               Lock;             /*!< Locking object                     */
+    
+      __IO HAL_UART_StateTypeDef    gState;           /*!< UART state information related to global Handle management
+                                                           and also related to Tx operations.
+                                                           This parameter can be a value of @ref HAL_UART_StateTypeDef */
+    
+      __IO HAL_UART_StateTypeDef    RxState;          /*!< UART state information related to Rx operations.
+                                                           This parameter can be a value of @ref HAL_UART_StateTypeDef */
+    
+      __IO uint32_t                 ErrorCode;        /*!< UART Error code                    */
+    
+    
+    } UART_HandleTypeDef;
+    ```
+
+  - 对于初始化结构体来讲，只需要关心`USART_TypeDef *Instance;`和`UART_InitTypeDef Init;`，如果使用**DMA**，需要配置**DMA**的参数。
+
+  - ```c
+    uart_debug_handle.Instance = USART1;						/*启用USART1*/
+    uart_debug_handle.Init.BaudRate = 115200;					/*波特率设置115200baud*/
+    uart_debug_handle.Init.WordLength = UART_WORDLENGTH_8B;		/*数据长度8bit*/
+    uart_debug_handle.Init.StopBits = UART_STOPBITS_1;			/*停止位1bit*/
+    uart_debug_handle.Init.Parity = UART_PARITY_NONE;			/*不使能校验位*/
+    uart_debug_handle.Init.Mode = UART_MODE_TX_RX;				/*接收/发送模式*/
+    uart_debug_handle.Init.OverSampling = UART_OVERSAMPLING_16;	/*采用过度采样，目的是实现更高的速度，stm32f10xx系列默认使用16*/
+    uart_debug_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;		/*不需要设置硬件流控uint32_t HwFlowCtl，这是同步发送的参数*/
+    ```
+
+#### 3.2 初始化UART句柄结构体：
+
+- `HAL_UART_Init(&uart_debug_handle);`
+
+#### 3.3 重写UART底层驱动回调函数：
+
+- `void HAL_UART_MspInit(UART_HandleTypeDef *huart)`
+
+- ```c
+  ```
+
+- 
