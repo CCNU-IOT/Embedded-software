@@ -24,6 +24,8 @@
 /* USER CODE BEGIN Includes */
 #include "led.h"
 #include "motor.h"
+#include "key.h"
+#include "btim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -76,6 +78,9 @@ int main(void)
   /* USER CODE BEGIN Init */
   //breath_led_init();
   bcd_motor_init();
+  led_init();
+  key_init();
+  TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);//使计数器每毫秒增加1，且周期为1，产生1ms中断
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -97,8 +102,40 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+<<<<<<< HEAD
+    switch(key_scan())
+    {
+      case KEY0_PRESSED_SHORT://短按KEY0，LED呼吸灯
+      breath_led_brightness(&breath_dir, &duty);
+      HAL_Delay(5);
+      break;
+
+      case KEY1_PRESSED_SHORT:
+      led_init();
+      break;
+
+      case KEY_UP_PRESSED_SHORT:
+      led_init();
+      break;
+      
+      case KEY0_PRESSED_LONG://长按KEY0，初始化所有LED
+      led_init();
+      break;
+
+      case KEY1_PRESSED_LONG:
+      led_init();
+      break;
+      
+      case KEY_UP_PRESSED_LONG:
+      led_init();
+      break;
+    }
+    //   breath_led_brightness(&breath_dir, &duty);
+    //   HAL_Delay(5);
+=======
     //breath_led_brightness(&breath_dir, &duty);
     //HAL_Delay(10);
+>>>>>>> d15138f52d837018c13e444506cfb31a0dcda7be
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

@@ -10,7 +10,7 @@
       <TargetName>Breathing-Lamps</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -134,10 +134,10 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4101</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\UL2V8M.DLL</Flash2>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -515,6 +515,16 @@
               <FilePath>..\Drivers\BSP\Src\motor.c</FilePath>
             </File>
             <File>
+<<<<<<< HEAD
+              <FileName>btim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\btim.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\key.c</FilePath>
+=======
               <FileName>encoder.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\Src\encoder.c</FilePath>
@@ -523,6 +533,7 @@
               <FileName>tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\Src\tim.c</FilePath>
+>>>>>>> d15138f52d837018c13e444506cfb31a0dcda7be
             </File>
           </Files>
         </Group>
