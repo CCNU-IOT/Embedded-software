@@ -78,7 +78,19 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
     if (huart->Instance == UART_DEBUG)
     {
         __HAL_RCC_USART1_CLK_ENABLE();
-        
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+
+        gpio_init_struct.Pin = UART_DEBUG_TX_GPIO_PIN;
+        gpio_init_struct.Mode = GPIO_MODE_AF_PP;
+        gpio_init_struct.Pull = GPIO_NOPULL; /*F1系列不能设置上下拉*/
+        gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(UART_DEBUG_TX_GPIO_PORT, &gpio_init_struct);
+
+        gpio_init_struct.Pin = UART_DEBUG_RX_GPIO_PIN;
+        gpio_init_struct.Mode = GPIO_MODE_AF_PP;
+        gpio_init_struct.Pull = GPIO_PULLUP;    /*空闲的时候是高电平，因此上拉*/
+        gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(UART_DEBUG_RX_GPIO_PORT, &gpio_init_struct);
     }
 }
 
