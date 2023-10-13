@@ -18,7 +18,8 @@
 *.axf
 *.tra
 *.dep    
-*.null       
+*.null    
+**/.assets/
 JLinkLog.txt
 
 *.iex
