@@ -55,7 +55,7 @@
 
 #### 2.1 写操作
 
-* $I^2C$写操作通讯过程图![image-20231013172445086](IIC.assets/image-20231013172445086.png)
+* $I^2C$写操作通讯过程图![image-20231013172445086](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202310131756515.png)
 * 写操作全流程：
   1. 主机在 IIC 总线上**发送起始信号**，总线上的从机全部等待接收由主机发出的数据
   2. 主机**发送**从机地址+0(写操作)组成的 8bit 数据
@@ -66,7 +66,7 @@
 
 #### 2.2 读操作
 
-* $I^2C$读操作通讯过程图![image-20231013173505970](IIC.assets/image-20231013173505970.png)
+* $I^2C$读操作通讯过程图![image-20231013173505970](https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202310131756516.png)
 * 读操作全流程：
   1. 主机在 IIC 总线上**发送起始信号**，总线上的从机全部等待接收由主机发出的数据
   2. 主机**发送**从机地址+1(读操作)组成的 8bit 数据
