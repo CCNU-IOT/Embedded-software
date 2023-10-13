@@ -1,4 +1,4 @@
-## OLED
+# OLED
 ## 一、OLED简介
 
 * OLED，即有机发光二极管（Organic Light-Emitting Diode），是一种利用多层有机薄膜结构产生电致发光的器件，所需驱动电压低。
