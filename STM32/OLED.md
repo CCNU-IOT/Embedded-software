@@ -143,3 +143,16 @@
 * 解决方法的缺点：
   * 对于SRAM 很小的单片机不友好
   * 每次修改都写入全屏会导致屏幕刷新率降低
+
+## 五、OLED显示的设置步骤
+
+1. 设置 STM32F103 与 OLED 模块相连接的 IO
+
+2. 如图，初始化 OLED 模块
+
+   <img src="https://raw.githubusercontent.com/undefined-0/image-store/main/PicGo/202310131632408.png" alt="image-20231013161503874" style="zoom:25%;" />
+
+3. 通过函数将字符和数字显示到 OLED 模块上
+
+
+
