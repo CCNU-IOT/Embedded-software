@@ -26,6 +26,7 @@
 #include "motor.h"
 #include "key.h"
 #include "btim.h"
+#include "uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -77,10 +78,11 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   //breath_led_init();
-  bcd_motor_init();
-  led_init();
-  key_init();
-  TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);//Ê¹¼ÆÊýÆ÷Ã¿ºÁÃëÔö¼Ó1£¬ÇÒÖÜÆÚÎª1£¬²úÉú1msÖÐ¶Ï
+  //bcd_motor_init();
+  //led_init();
+  //key_init();
+
+  //TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);//Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1msï¿½Ð¶ï¿½
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -96,16 +98,24 @@ int main(void)
   //uint32_t duty = 0;
   //Breath_LED_Direction breath_dir = Breath_Positive;
   /* USER CODE END 2 */
-
+  uart_debug_init();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-<<<<<<< HEAD
+    if (uart_debug_rx_flag == 1)
+    {
+      printf("æŽ¥æ”¶åˆ°çš„å­—ç¬¦ä¸º:\r\n");
+      HAL_UART_Transmit(&uart_debug_handle, (uint8_t *)uart_debug_rx_buffer, 1, 1000);
+      while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != 1);
+      uart_debug_rx_flag = 0;
+      printf("\r\n");
+    }
+    /*
     switch(key_scan())
     {
-      case KEY0_PRESSED_SHORT://¶Ì°´KEY0£¬LEDºôÎüµÆ
+      case KEY0_PRESSED_SHORT://ï¿½Ì°ï¿½KEY0ï¿½ï¿½LEDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       breath_led_brightness(&breath_dir, &duty);
       HAL_Delay(5);
       break;
@@ -118,7 +128,7 @@ int main(void)
       led_init();
       break;
       
-      case KEY0_PRESSED_LONG://³¤°´KEY0£¬³õÊ¼»¯ËùÓÐLED
+      case KEY0_PRESSED_LONG://ï¿½ï¿½ï¿½ï¿½KEY0ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LED
       led_init();
       break;
 
@@ -130,12 +140,9 @@ int main(void)
       led_init();
       break;
     }
+    */
     //   breath_led_brightness(&breath_dir, &duty);
     //   HAL_Delay(5);
-=======
-    //breath_led_brightness(&breath_dir, &duty);
-    //HAL_Delay(10);
->>>>>>> d15138f52d837018c13e444506cfb31a0dcda7be
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

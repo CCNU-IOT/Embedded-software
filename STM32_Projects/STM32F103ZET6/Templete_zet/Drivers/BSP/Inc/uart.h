@@ -8,4 +8,9 @@
 #define UART_DEBUG_TX_GPIO_PIN                              GPIO_PIN_9
 #define UART_DEBUG_RX_GPIO_PORT                             GPIOA
 #define UART_DEBUG_RX_GPIO_PIN                              GPIO_PIN_10
+
+extern UART_HandleTypeDef uart_debug_handle;
+extern uint8_t uart_debug_rx_buffer[1];
+extern uint8_t uart_debug_rx_flag;
+void uart_debug_init(void);
 #endif

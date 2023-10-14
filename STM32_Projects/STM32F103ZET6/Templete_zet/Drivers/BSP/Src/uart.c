@@ -58,7 +58,8 @@ int fputc(int ch, FILE *f)
 
 
 UART_HandleTypeDef uart_debug_handle;
-
+uint8_t uart_debug_rx_buffer[1];        /*串口接收缓冲区*/
+uint8_t uart_debug_rx_flag = 0;         
 void uart_debug_init(void)
 {
     uart_debug_handle.Instance = UART_DEBUG;
@@ -71,6 +72,9 @@ void uart_debug_init(void)
     uart_debug_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
 
     HAL_UART_Init(&uart_debug_handle);
+
+    HAL_UART_Receive_IT(&uart_debug_handle, (uint8_t *)uart_debug_rx_buffer, 1); /*这里有一个疑问：关于接收缓冲区的大小，是否是当缓冲区满了的时候才会触发中断吗，目前觉得不是这样的*/
+
 }
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
@@ -81,16 +85,35 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         __HAL_RCC_GPIOA_CLK_ENABLE();
 
         gpio_init_struct.Pin = UART_DEBUG_TX_GPIO_PIN;
-        gpio_init_struct.Mode = GPIO_MODE_AF_PP;
-        gpio_init_struct.Pull = GPIO_NOPULL; /*F1系列不能设置上下拉*/
+        gpio_init_struct.Mode = GPIO_MODE_AF_PP;            /*复用推挽输出*/
+        gpio_init_struct.Pull = GPIO_NOPULL;                /*F1系列在发送的时候不能设置上下拉*/
         gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
         HAL_GPIO_Init(UART_DEBUG_TX_GPIO_PORT, &gpio_init_struct);
 
         gpio_init_struct.Pin = UART_DEBUG_RX_GPIO_PIN;
-        gpio_init_struct.Mode = GPIO_MODE_AF_PP;
-        gpio_init_struct.Pull = GPIO_PULLUP;    /*空闲的时候是高电平，因此上拉*/
-        gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
+        gpio_init_struct.Mode = GPIO_MODE_AF_INPUT;         /*复用推挽输入*/
+        gpio_init_struct.Pull = GPIO_PULLUP;                /*空闲的时候是高电平，因此上拉*/
+        gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;      /*输入引脚不需要设置速度，但是为了看起来好看一点，还是可以设置的(但是没用)*/
         HAL_GPIO_Init(UART_DEBUG_RX_GPIO_PORT, &gpio_init_struct);
+
+        HAL_NVIC_SetPriority(USART1_IRQn, 2, 0);                             /*设置中断优先级*/
+        HAL_NVIC_EnableIRQ(USART1_IRQn);                                     /*将中断号在NVIC处挂号*/
+
+
+
     }
 }
-
+void USART1_IRQHandler(void)
+{
+    HAL_UART_IRQHandler(&uart_debug_handle);
+}
+/**
+ * @brief UART接收完成中断回调函数
+*/
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == UART_DEBUG)
+    {
+        uart_debug_rx_flag = 1; /*接收到数据*/
+    }
+}
