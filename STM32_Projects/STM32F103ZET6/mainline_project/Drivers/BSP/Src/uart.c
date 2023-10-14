@@ -89,7 +89,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
     {
         __HAL_RCC_USART1_CLK_ENABLE();
         __HAL_RCC_GPIOA_CLK_ENABLE();
-        __HAL_RCC_AFIO_CLK_ENABLE();
 
         gpio_init_struct.Pin = UART_DEBUG_TX_GPIO_PIN;
         gpio_init_struct.Mode = GPIO_MODE_AF_PP;                                /*复用推挽输出*/
@@ -166,7 +165,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 }
 
 /**
- * @brief 将接收缓冲区打印: 阻塞
+ * @brief 将接收缓冲区打印: 阻塞方式
 */
 void uart_debug_tx_rxbuffer(uint16_t rxbuffer_size, uint32_t timeout)
 {
@@ -177,7 +176,7 @@ void uart_debug_tx_rxbuffer(uint16_t rxbuffer_size, uint32_t timeout)
     uart_debug_rx_status = RESET;
 }
 /**
- * @brief 判断接收是否完成
+ * @brief 判断接收缓冲区的接收工作是否完成
  * @retval 1:接收完成
  *         0:接收未完成
 */
