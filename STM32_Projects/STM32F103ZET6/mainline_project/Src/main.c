@@ -85,7 +85,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uart_debug_init();	
+  uart_debug_init(115200);
+	printf("Hello World\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -93,13 +94,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    if (uart_debug_rx_flag == SET)
+    if (uart_debug_rx_complete())
     {
-      uart_debug_rx_flag = RESET;
-      printf("character:\r\n");
-      HAL_UART_Transmit(&uart_debug_handle, uart_debug_rx_buffer, 1, 1000);
-      while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != SET);
-      printf("\r\n");
+      uart_debug_tx_rxbuffer(UART_DEBUG_RX_PROTOCOL_BUFFER_COUNT, 1000);
     }
     /* USER CODE BEGIN 3 */
   }
