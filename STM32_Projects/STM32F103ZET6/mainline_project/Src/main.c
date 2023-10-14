@@ -85,7 +85,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uart_debug_init();	
+  uart_debug_init();
+  //OLED_Init();	
   /* USER CODE END 2 */
 
   /* Infinite loop */
