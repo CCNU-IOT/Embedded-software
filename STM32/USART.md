@@ -381,6 +381,8 @@
     - **Linux端**的换行：`\n`，换行符。
   - 创建一个**uint16_t变量**(将变量当做寄存器使用)：**usart_debug_rx_status**
   - ![image-20231015013817270](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231015013817270.png)
+    - 当检测到**回车符**的时候，**Bit14**置**1**。
+    - 当检测到**换行符**，且**Bit14 = 1**，**Bit15**置**1**，此时接收完成。
 
 - ```c
   if (!(uart_debug_rx_status & 0x8000)) /*接收未完成*/
