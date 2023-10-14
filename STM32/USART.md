@@ -134,7 +134,7 @@
       - **1**：可以产生接收器中断。
     - **USART_SR中的Bit5作为中断位**：
       - ![image-20231012195807493](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231012195807493.png)
-      - 该位由**硬件设置**，由**软件清除**。
+      - 该位由**硬件设置**，由**硬件/软件清除**。
       - **当RXNEIE使能时**：
         - **0**：**USART_DR寄存器**中还没有收到数据，不能进行读取。
         - **1**：**接收移位寄存器**将接收到的**固定位**的数据发送到**USART_RDR**中，并且**USART_RDR**将数据发送到**USART_DR**中，数据准备好被读取，并且**产生中断**。
@@ -146,7 +146,7 @@
       - **1**：可以产生发送器中断。
     - **USART_SR中的Bit6作为中断位**：
       - ![image-20231012200536249](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231012200536249.png)
-      - 该位由**硬件设置**，由**软件清除**。
+      - 该位由**硬件设置**，由**硬件/软件清除**。
       - **当TCIE使能时**：
         - **0**：**发送移位寄存器**还没有将数据发送完成，或者**USART_TDR寄存器**中存有数据，此时不能向**USART_DR**中写入数据。
         - 1：**发送移位寄存器**和**USART_TDR**中都没有数据，此时发送完成，可以向**USART_DR**中写入数据，并且**产生中断**。
@@ -221,7 +221,28 @@
 
 - 以**UART**为例，如果不使用同步通信的话，我们只需要使用**UART系列HAL函数**，**USART**和**UART**都可以被配置。
 
-#### 3.1 创建UART句柄结构体：
+#### 3.1 声明相关宏定义：
+
+- ```c
+  #define UART_DEBUG                                          USART1
+  #define UART_DEBUG_TX_GPIO_PORT                             GPIOA
+  #define UART_DEBUG_TX_GPIO_PIN                              GPIO_PIN_9
+  #define UART_DEBUG_RX_GPIO_PORT                             GPIOA
+  #define UART_DEBUG_RX_GPIO_PIN                              GPIO_PIN_10
+  #define UART_DEBUG_RX_BUFFER_SIZE                           1U
+  #define UART_DEBUG_RX_PROTOCOL_BUFFER_SIZE                  200U
+  #define UART_DEBUG_LINE_FEED_FLAG                           0X0AU
+  #define UART_DEBUG_CARRIAGE_RETURN_FLAG                     0X0DU
+  #define UART_DEBUG_RX_PROTOCOL_BUFFER_COUNT                 (uart_debug_rx_status & 0X3FFF)
+  ```
+
+  - `UART_DEBUG_RX_BUFFER_SIZE`，**HAL库**调用的**接收缓冲区**的大小，我们这里设置成**1字节**。
+  - `UART_DEBUG_RX_PROTOCOL_BUFFER_SIZE`，**接收协议**设置的**接收缓冲区**大小，我们这里设置成**200字节**。
+  - `UART_DEBUG_LINE_FEED_FLAGs`，**换行符**对应的值。
+  - `UART_DEBUG_CARRIAGE_RETURN_FLAG`，**回车符**对应的值。
+  - `UART_DEBUG_RX_PROTOCOL_BUFFER_COUNT`，表示按照**接收协议**接收到的**字节数**。
+
+#### 3.2 创建UART句柄结构体：
 
 - `UART_HandleTypeDef uart_debug_handle;`
 
@@ -282,15 +303,207 @@
     uart_debug_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;		/*不需要设置硬件流控uint32_t HwFlowCtl，这是同步发送的参数*/
     ```
 
-#### 3.2 初始化UART句柄结构体：
+#### 3.3 初始化UART句柄结构体：
 
 - `HAL_UART_Init(&uart_debug_handle);`
 
-#### 3.3 重写UART底层驱动回调函数：
+#### 3.4 重写UART底层驱动回调函数：
 
 - `void HAL_UART_MspInit(UART_HandleTypeDef *huart)`
 
 - ```c
+      GPIO_InitTypeDef gpio_init_struct;
+      if (huart->Instance == UART_DEBUG)
+      {
+          __HAL_RCC_USART1_CLK_ENABLE();
+          __HAL_RCC_GPIOA_CLK_ENABLE();
+  
+          gpio_init_struct.Pin = UART_DEBUG_TX_GPIO_PIN;
+          gpio_init_struct.Mode = GPIO_MODE_AF_PP;                                /*复用推挽输出*/
+          gpio_init_struct.Pull = GPIO_PULLUP;                                    /*发送引脚需要设置成上拉，因为空闲输出高电平*/
+          gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
+          HAL_GPIO_Init(UART_DEBUG_TX_GPIO_PORT, &gpio_init_struct);
+  
+          gpio_init_struct.Pin = UART_DEBUG_RX_GPIO_PIN;
+          gpio_init_struct.Mode = GPIO_MODE_AF_INPUT;                             /*复用推挽输入*/
+          gpio_init_struct.Pull = GPIO_NOPULL;                                    /*输入引脚不需要设置上下拉*/
+          gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;                          /*输入引脚不需要设置速度，但是为了看起来好看一点，还是可以设置的(但是没用)*/
+          HAL_GPIO_Init(UART_DEBUG_RX_GPIO_PORT, &gpio_init_struct);
+  
+          HAL_NVIC_SetPriority(USART1_IRQn, 3, 3);                                /*设置中断优先级*/
+          HAL_NVIC_EnableIRQ(USART1_IRQn);                                        /*将中断号在NVIC处挂号*/
+  
+      }
   ```
 
-- 
+  - 在**STM32F103ZET6**中，**USART1_TX  <----> GPIOA_9**，**USART1_RX <----> GPIOA_10**。
+
+
+#### 3.5 USART1中断服务函数入口：
+
+- ```c
+  void USART1_IRQHandler(void)
+  {
+      HAL_UART_IRQHandler(&uart_debug_handle);                                        /*该函数会将UART接收中断除能，因此要再次使能*/
+      HAL_UART_Receive_IT(&uart_debug_handle, uart_debug_rx_buffer, UART_DEBUG_RX_BUFFER_SIZE);               /*使能UART接收完成中断*/
+  }
+  ```
+
+- **第一个易错点**：
+
+  - `HAL_UART_Receive_IT`函数使能**USART1**的接收中断：
+    - 上面在分析寄存器的时候，当**USART_DR**中有数据(**一字节**)的时候，**RXNE**被置**1**，当**RXNEIE**为**1**的时候，产生中断。
+    - 对于函数层面来讲，当接受到**UART_DEBUG_RX_BUFFER_SIZE**个字符(字节)的时候，触发接收中断，数据存储在**uart_debug_rx_buffer**这个**uint8_t**数组中。
+      - 通常情况下，**UART_DEBUG_RX_BUFFER_SIZE**会被设置为**1**。
+
+- **第二个易错点**：
+
+  - `HAL_UART_IRQHandler`函数会调用`UART_Receive_IT`，该函数会**失能**接收中断，因此在最后要**重新使能**接受中断。
+
+#### 3.6 重写接受完成中断回调函数：
+
+- ```c
+  void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+  {
+      if (huart->Instance == UART_DEBUG)   /*判断是否是USART1*/
+      {
+          uart_debug_protocol_rx();		/*调用协议接收函数*/
+      }
+  }
+  ```
+
+#### 3.7 接收协议：
+
+- **整体思路**：
+  - **UART接收中断**每次能够接收到**一个字符**，接收到的字符首先会存放在**HAL库调用的接收缓冲区**中，之后再转移到**接收协议缓冲区**中，当检测到**换行**的时候，接收数据完毕。
+    - 为了演示，将接收的数据**打印**到串口调试助手。
+    - **Windows端**的换行：`\r\n`，回车符 + 换行符。
+    - **Linux端**的换行：`\n`，换行符。
+  - 创建一个**uint16_t变量**(将变量当做寄存器使用)：**usart_debug_rx_status**
+  - ![image-20231015013817270](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/image-20231015013817270.png)
+
+- ```c
+  if (!(uart_debug_rx_status & 0x8000)) /*接收未完成*/
+  {
+      if ((uart_debug_rx_status & 0x4000)) /*0100 0000 0000 0000 已经接收到回车符*/
+      {
+          if (uart_debug_rx_buffer[0] == UART_DEBUG_LINE_FEED_FLAG) /*这次接收到的是换行符*/
+          {
+              uart_debug_rx_status |= 0x8000;      /*1100 0000 0000 0000 一次协议接收完成*/
+          }
+          else    /*接收到的不是换行符，那么接收错误，重新开始接收*/ 
+          {
+              uart_debug_rx_status = 0;
+              /*接收协议所使用的缓冲区没必要清空，只需要重写即可，因为是按照接收长度取数组中的值*/
+          }
+      }
+      else   /*还没有接收到回车符*/ 
+      {
+          if (uart_debug_rx_buffer[0] == UART_DEBUG_CARRIAGE_RETURN_FLAG) /*本次接收到回车符*/
+          {
+              uart_debug_rx_status |= 0x4000;   /*01xx xxxx xxxx xxxx*/
+          }
+          else if ((uart_debug_rx_buffer[0] == UART_DEBUG_LINE_FEED_FLAG) || (UART_DEBUG_RX_PROTOCOL_BUFFER_COUNT >= UART_DEBUG_RX_PROTOCOL_BUFFER_SIZE))   /*先接收到换行符或者超出了协议缓冲区的大小，接受错误，重新开始*/
+          {
+              uart_debug_rx_status = 0;
+          }
+          else /*接收到普通字符，放置到协议接收缓冲区中*/
+          {
+              uart_debug_rx_protocol_buffer[UART_DEBUG_RX_PROTOCOL_BUFFER_COUNT] = uart_debug_rx_buffer[0];
+              uart_debug_rx_status++;
+          }
+      }
+  }
+  ```
+
+  - **最外层if**的用处：
+    - 当接收完成之后，**uart_debug_rx_protocol_buffer**中的值将会被固定，不会再接收新的值到**协议缓冲区**中，只有手动重置**uart_debug_rx_status**的值后，**协议缓冲区**才可以继续接收数据。
+
+#### 3.8 打印协议接收缓冲区数据：
+
+- ```c
+  /**
+   * @brief 判断接收缓冲区的接收工作是否完成
+   * @retval 1:接收完成
+   *         0:接收未完成
+  */
+  uint8_t uart_debug_rx_complete(void)
+  {
+      return ((uart_debug_rx_status & 0x8000) != RESET);
+  }
+  ```
+
+- ```c
+  /**
+   * @brief 将接收缓冲区打印: 阻塞方式
+  */
+  void uart_debug_tx_rxbuffer(uint16_t rxbuffer_size, uint32_t timeout)
+  {
+      printf("rx_buffer is:\r\n");
+      HAL_UART_Transmit(&uart_debug_handle, (uint8_t*)uart_debug_rx_protocol_buffer, rxbuffer_size, timeout);
+      while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != SET); /*等待发送完成*/
+      printf("\r\n");
+      uart_debug_rx_status = RESET;
+  }
+  ```
+
+## 4.printf的使用：
+
+- 在**STM32**中使用**printf**打印数据到**串口调试助手**，需要我们重写**fputc函数**，通常情况下，将**USART1**作为**printf**的**输出设备**。
+
+- 将以下代码放入**uart.c**中，可以直接在工程中调用**printf**函数，编译过程中不需要勾选**MicroLIB**。
+
+  - ```c
+    /******************************************************************************************/
+    /*定义以下代码，可以直接在工程中使用printf函数(前提是初始化USART1)*/
+    #ifndef UART_DEBUG_PRINTF
+    #define UART_DEBUG_PRINTF
+    #if (__ARMCC_VERSION >= 6010050)            
+    __asm(".global __use_no_semihosting\n\t"); 
+    __asm(".global __ARM_use_no_argv \n\t");   
+    
+    #else
+    
+    #pragma import(__use_no_semihosting)
+    
+    struct __FILE
+    {
+        int handle;
+        /* Whatever you require here. If the only file you are using is */
+        /* standard output using printf() for debugging, no file handling */
+        /* is required. */
+    };
+    
+    #endif
+    FILE __stdout;
+    
+    int _ttywrch(int ch)
+    {
+        ch = ch;
+        return ch;
+    }
+    
+    void _sys_exit(int x)
+    {
+        x = x;
+    }
+    
+    char *_sys_command_string(char *cmd, int len)
+    {
+        return NULL;
+    }
+    
+    /**
+     * @brief 重写fputc函数
+    */
+    int fputc(int ch, FILE *f)
+    {
+        
+        while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) == RESET);/*TC标志位一直为0，说明上一个字节没有发送完*/    
+    
+        UART_DEBUG->DR = (uint8_t)ch;            
+        return ch;
+    }
+    #endif /*UART_DEBUG_PRINTF*/
+    /******************************************************************************************/
+    ```
