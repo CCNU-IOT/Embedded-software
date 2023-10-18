@@ -21,6 +21,8 @@
 #include "gpio.h"
 #include "uart.h"
 #include "pwm.h"
+#include "motor.h"
+#include "encoder.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -86,8 +88,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  bcd_motor_init(50);
-  uart_debug_init(115200);
+  bcd_motor_init(90);   /*直流无刷电机驱动初始化*/
+  bcd_encoder_init();   /*编码器初始化——测速*/
+  uart_debug_init(115200);  /*USART1初始化*/
 	printf("Hello World\r\n");
   /* USER CODE END 2 */
 
@@ -96,7 +99,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    printf("motor speed is: %f rpm.\r\n", bcd_motor_init_struct.speed);
+    HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
