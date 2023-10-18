@@ -23,7 +23,7 @@ typedef enum
 #define BCD_MOTOR_AIN_2_GPIO_PORT                                   GPIOG
 #define BCD_MOTOR_AIN_2_GPIO_PIN                                    GPIO_PIN_2
 
-void bcd_motor_init(void);
+void bcd_motor_init(uint32_t duty);
 void bcd_motor_change_direction(BCD_MOTOR_Direction dir);
 
 extern BCD_MOTOR_InitTypeDef bcd_motor_init_struct;

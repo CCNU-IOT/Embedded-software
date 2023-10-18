@@ -20,7 +20,11 @@ void breath_led_pwm_init(void)
     HAL_TIM_PWM_ConfigChannel(&breath_led_pwm_time_handle, &tim_oc_init_struct, BREATH_LED_PWM_GRNERAL_TIM_CHANNEL2);
     HAL_TIM_PWM_Start(&breath_led_pwm_time_handle, BREATH_LED_PWM_GRNERAL_TIM_CHANNEL2);
 }
-void brushed_dc_motor_pwm_init(void)
+/**
+ * @brief 初始化直流无刷电机
+ * @param duty:PWM的占空比，用于控制转速(范围0 ~ 99)
+*/
+void brushed_dc_motor_pwm_init(uint32_t duty)   
 {
     TIM_OC_InitTypeDef tim_oc_init_struct;
 
@@ -33,7 +37,7 @@ void brushed_dc_motor_pwm_init(void)
     HAL_TIM_PWM_Init(&brushed_dc_motor_pwm_time_handle);
 
     tim_oc_init_struct.OCMode = TIM_OCMODE_PWM1;
-    tim_oc_init_struct.Pulse = BRUSHED_DC_MOTOR_PWM_GENERAL_TIM_DUTY;
+    tim_oc_init_struct.Pulse = duty;
     tim_oc_init_struct.OCNPolarity = TIM_OCNPOLARITY_HIGH;
 
     HAL_TIM_PWM_ConfigChannel(&brushed_dc_motor_pwm_time_handle, &tim_oc_init_struct, BRUSHED_DC_MOTOR_PWM_GENERAL_TIM_CHANNEL1);

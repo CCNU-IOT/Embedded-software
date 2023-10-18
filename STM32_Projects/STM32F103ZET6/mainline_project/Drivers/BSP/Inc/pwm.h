@@ -33,5 +33,5 @@
 extern TIM_HandleTypeDef breath_led_pwm_time_handle;
 extern TIM_HandleTypeDef brushed_dc_motor_pwm_time_handle;
 void breath_led_pwm_init(void);
-void brushed_dc_motor_pwm_init(void);
+void brushed_dc_motor_pwm_init(uint32_t duty);
 #endif

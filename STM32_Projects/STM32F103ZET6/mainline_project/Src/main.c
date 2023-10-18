@@ -20,6 +20,7 @@
 #include "main.h"
 #include "gpio.h"
 #include "uart.h"
+#include "pwm.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -85,6 +86,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  bcd_motor_init(50);
   uart_debug_init(115200);
 	printf("Hello World\r\n");
   /* USER CODE END 2 */
@@ -94,10 +96,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    if (uart_debug_rx_complete())
-    {
-      uart_debug_tx_rxbuffer(UART_DEBUG_RX_PROTOCOL_BUFFER_COUNT, 1000);
-    }
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
