@@ -7,7 +7,13 @@ void I2C_Init()
 {
     __HAL_RCC_GPIOB_CLK_ENABLE(); // 使能GPIOB时钟（即SCL、SDA引脚时钟）
     
-    GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7;// SCL和SDA引脚
+    GPIO_InitStruct.Pin = GPIO_PIN_6;// SCL引脚
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; // 开漏输出模式
+    GPIO_InitStruct.Pull = GPIO_PULLUP; // 上拉
+    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH; // 高速
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_7;// SDA引脚
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD; // 开漏输出模式
     GPIO_InitStruct.Pull = GPIO_PULLUP; // 上拉
     GPIO_InitStruct.Speed = GPIO_SPEED_HIGH; // 高速
@@ -31,7 +37,7 @@ void I2C_Init()
  * @param       i: 1-高电平；0-低电平
  * @retval      无
  */
-void I2C_set_SCL(i) 
+void I2C_set_SCL(uint8_t i) 
 {   i?
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET):
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 
@@ -42,7 +48,7 @@ void I2C_set_SCL(i)
  * @param       i: 1-高电平；0-低电平
  * @retval      无
  */                        
-void I2C_set_SDA(i) 
+void I2C_set_SDA(uint8_t i) 
 {   i?
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET):
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET); 
@@ -65,16 +71,16 @@ void I2C_Stop(void)
     HAL_Delay(1);
     I2C_set_SCL(1);
     HAL_Delay(1);
-    IIC_set_SDA(1);
+    I2C_set_SDA(1);
     HAL_Delay(1);
 }
 
-HAL_StatusTypeDef I2C_SendData(uint8_t address, uint8_t* data, uint16_t size)
-{
-    return HAL_I2C_Master_Transmit(&hi2c, address, data, size, HAL_MAX_DELAY);
-}
+// HAL_StatusTypeDef I2C_SendData(uint8_t address, uint8_t* data, uint16_t size)
+// {
+//     return HAL_I2C_Master_Transmit(&hi2c, address, data, size, HAL_MAX_DELAY);
+// }
 
-HAL_StatusTypeDef I2C_ReceiveData(uint8_t address, uint8_t* data, uint16_t size)
-{
-    return HAL_I2C_Master_Receive(&hi2c, address, data, size, HAL_MAX_DELAY);
-}
+// HAL_StatusTypeDef I2C_ReceiveData(uint8_t address, uint8_t* data, uint16_t size)
+// {
+//     return HAL_I2C_Master_Receive(&hi2c, address, data, size, HAL_MAX_DELAY);
+// }

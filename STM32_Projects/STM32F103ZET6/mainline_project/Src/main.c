@@ -20,6 +20,9 @@
 #include "main.h"
 #include "gpio.h"
 #include "uart.h"
+// #include "oled.h"
+// #include "iic.h"
+ #include "relay.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -86,24 +89,37 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   uart_debug_init();
-  //OLED_Init();	
+  //OLED_Init();
+  Relay_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-    if (uart_debug_rx_flag == SET)
-    {
-      uart_debug_rx_flag = RESET;
-      printf("character:\r\n");
-      HAL_UART_Transmit(&uart_debug_handle, uart_debug_rx_buffer, 1, 1000);
-      while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != SET);
-      printf("\r\n");
+  
+  // while (1)
+  // {
+  //   /* USER CODE END WHILE */
+  //   if (uart_debug_rx_flag == SET)
+  //   {
+  //     uart_debug_rx_flag = RESET;
+  //     printf("character:\r\n");
+  //     HAL_UART_Transmit(&uart_debug_handle, uart_debug_rx_buffer, 1, 1000);
+  //     while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != SET);
+  //     printf("\r\n");
+  //   }
+  //   /* USER CODE BEGIN 3 */
+  // }
+
+   while (1) {
+        // 打开继电器
+        Relay_On();
+        HAL_Delay(1000); // 延时1秒
+
+        // 关闭继电器
+        Relay_Off();
+        HAL_Delay(1000); // 延时1秒
     }
-    /* USER CODE BEGIN 3 */
-  }
+
   /* USER CODE END 3 */
 }
 

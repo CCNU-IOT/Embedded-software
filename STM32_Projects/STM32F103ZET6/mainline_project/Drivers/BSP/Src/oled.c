@@ -1,13 +1,13 @@
 #include "oled.h"
 
-#define OLED_I2C_ADDRESS 0x78 // å®é™…7ä½I2Cåœ°å€ 0x3c å·¦ç§»ä¸€ä½å¾—åˆ°0x78
-#define OLED_CMD_SINGLE 0x80 // ç”¨äºè¡¨ç¤ºå‘é€å•ä¸ªå‘½ä»¤
-#define OLED_CMD_STREAM 0x00 // ç”¨äºè¡¨ç¤ºå‘é€æ•°æ®æµ
+#define OLED_I2C_ADDRESS 0x78 // Êµ¼Ê7Î»I2CµØÖ·0x3c ×óÒÆÒ»Î»µÃµ½0x78
+#define OLED_CMD 0x00 // 0000 0000 ·¢ËÍÃüÁî
+#define OLED_DATA 0x80 // 1100 0000 ·¢ËÍÊı¾İ
 
 I2C_HandleTypeDef hi2c;
 
-static void OLED_WriteByte(uint8_t data, uint8_t cmd) { // å‘OLEDå†™å…¥ä¸€ä¸ªå­—èŠ‚
-    uint8_t buffer[2];                                  // å­˜æ”¾è¦å‘é€æ•°æ®çš„ç¼“å†²åŒº
+static void OLED_WriteByte(uint8_t cmd , uint8_t data) { // ÏòOLEDĞ´ÈëÒ»¸ö×Ö½Ú
+    uint8_t buffer[2]; // ´æ·ÅÒª·¢ËÍÊı¾İµÄ»º³åÇø
     buffer[0] = cmd;
     buffer[1] = data;
     HAL_I2C_Master_Transmit(&hi2c, OLED_I2C_ADDRESS, buffer, 2, HAL_MAX_DELAY);
@@ -15,58 +15,75 @@ static void OLED_WriteByte(uint8_t data, uint8_t cmd) { // å‘OLEDå†™å…¥ä¸€ä¸ªå­
 
 void OLED_Init() 
 {
-    IIC_Init();
+    I2C_Init();
 
-    OLED_WriteByte(0xAE, OLED_CMD_SINGLE);  // å…³é—­æ˜¾ç¤º
-    OLED_WriteByte(0xD5, OLED_CMD_SINGLE);  // è®¾ç½®æ—¶é’Ÿåˆ†é¢‘å› å­
-    OLED_WriteByte(0x80, OLED_CMD_SINGLE);  // åˆ†é¢‘å› å­
-    OLED_WriteByte(0xA8, OLED_CMD_SINGLE);  // è®¾ç½®å¤šæç”µå‹æ¯”ä¾‹
-    OLED_WriteByte(0x3F, OLED_CMD_SINGLE);  // 1/64 åå‹
-    OLED_WriteByte(0xD3, OLED_CMD_SINGLE);  // è®¾ç½®æ˜¾ç¤ºåç§»
-    OLED_WriteByte(0x00, OLED_CMD_SINGLE);
-    OLED_WriteByte(0x40, OLED_CMD_SINGLE);  // è®¾ç½®èµ·å§‹è¡Œ
-    OLED_WriteByte(0x8D, OLED_CMD_SINGLE);  // å¯ç”¨ç”µè·æ³µ
-    OLED_WriteByte(0x14, OLED_CMD_SINGLE);
-    OLED_WriteByte(0x20, OLED_CMD_SINGLE);  // è®¾ç½®å†…å­˜åœ°å€æ¨¡å¼
-    OLED_WriteByte(0x00, OLED_CMD_SINGLE);  // æ°´å¹³åœ°å€æ¨¡å¼
-    OLED_WriteByte(0xA1, OLED_CMD_SINGLE);  // æ®µé‡å®šä½
-    OLED_WriteByte(0xC8, OLED_CMD_SINGLE);  // å‚ç›´æ–¹å‘é‡å®šä½
-    OLED_WriteByte(0xDA, OLED_CMD_SINGLE);  // COMç¡¬ä»¶é…ç½®
-    OLED_WriteByte(0x12, OLED_CMD_SINGLE);
-    OLED_WriteByte(0x81, OLED_CMD_SINGLE);  // å¯¹æ¯”åº¦æ§åˆ¶
-    OLED_WriteByte(0xCF, OLED_CMD_SINGLE);  // è®¾ç½®å¯¹æ¯”åº¦
-    OLED_WriteByte(0xD9, OLED_CMD_SINGLE);  // é¢„å……ç”µå‘¨æœŸ
-    OLED_WriteByte(0xF1, OLED_CMD_SINGLE);
-    OLED_WriteByte(0xDB, OLED_CMD_SINGLE);  // è®¾ç½® VCOMH ç”µå‹å€ç‡
-    OLED_WriteByte(0x40, OLED_CMD_SINGLE);
-    OLED_WriteByte(0xA4, OLED_CMD_SINGLE);  // å…¨å±€æ˜¾ç¤ºå¼€å¯
-    OLED_WriteByte(0xA6, OLED_CMD_SINGLE);  // è®¾ç½®æ˜¾ç¤ºæ–¹å¼ï¼šæ­£å¸¸æ˜¾ç¤º
-    OLED_WriteByte(0xAF, OLED_CMD_SINGLE);  // æ‰“å¼€æ˜¾ç¤º
+    OLED_WriteByte(OLED_CMD, 0xAE);  // ¹Ø±ÕÏÔÊ¾
+    OLED_WriteByte(OLED_CMD, 0xD5);  // ÉèÖÃÊ±ÖÓ·ÖÆµÒò×Ó
+    OLED_WriteByte(OLED_CMD, 0x80);  // ·ÖÆµÒò×Ó
+    OLED_WriteByte(OLED_CMD, 0xA8);  // ÉèÖÃ¶à¼«µçÑ¹±ÈÀı
+    OLED_WriteByte(OLED_CMD, 0x3F);  // 1/64 Æ«Ñ¹
+    OLED_WriteByte(OLED_CMD, 0xD3);  // ÉèÖÃÏÔÊ¾Æ«ÒÆ
+    OLED_WriteByte(OLED_CMD, 0x00);
+    OLED_WriteByte(OLED_CMD, 0x40);  // ÉèÖÃÆğÊ¼ĞĞ
+    OLED_WriteByte(OLED_CMD, 0x8D);  // ÆôÓÃµçºÉ±Ã
+    OLED_WriteByte(OLED_CMD, 0x14);
+    OLED_WriteByte(OLED_CMD, 0x20);  // ÉèÖÃÄÚ´æµØÖ·Ä£Ê½
+    OLED_WriteByte(OLED_CMD, 0x00);  // Ë®Æ½µØÖ·Ä£Ê½
+    OLED_WriteByte(OLED_CMD, 0xA1);  // ¶ÎÖØ¶¨Î»
+    OLED_WriteByte(OLED_CMD, 0xC8);  // ´¹Ö±·½ÏòÖØ¶¨Î»
+    OLED_WriteByte(OLED_CMD, 0xDA);  // COMÓ²¼şÅäÖÃ
+    OLED_WriteByte(OLED_CMD, 0x12);
+    OLED_WriteByte(OLED_CMD, 0x81);  // ¶Ô±È¶È¿ØÖÆ
+    OLED_WriteByte(OLED_CMD, 0xCF);  // ÉèÖÃ¶Ô±È¶È
+    OLED_WriteByte(OLED_CMD, 0xD9);  // Ô¤³äµçÖÜÆÚ
+    OLED_WriteByte(OLED_CMD, 0xF1);
+    OLED_WriteByte(OLED_CMD, 0xDB);  // ÉèÖÃ VCOMH µçÑ¹±¶ÂÊ
+    OLED_WriteByte(OLED_CMD, 0x40);
+    OLED_WriteByte(OLED_CMD, 0xA4);  // È«¾ÖÏÔÊ¾¿ªÆô
+    OLED_WriteByte(OLED_CMD, 0xA6);  // ÉèÖÃÏÔÊ¾·½Ê½£ºÕı³£ÏÔÊ¾
+    OLED_WriteByte(OLED_CMD, 0xAF);  // ´ò¿ªÏÔÊ¾
+    OLED_WriteByte(OLED_CMD, 0xAE);  // ¹Ø±ÕÏÔÊ¾
 }
 
-void OLED_DisplayOn(void) 
+void OLED_DisplayOff(void) // ÇåÆÁ
 {
-    OLED_WriteByte(0xAF, OLED_CMD_SINGLE);
+    OLED_WriteByte(OLED_CMD, 0xAE);
 }
 
-void OLED_DisplayOff(void) 
+void OLED_DisplayPixel(uint8_t x, uint8_t y) // µãÁÁ×ø±ê(x, y)´¦ÏñËØ
 {
-    OLED_WriteByte(0xAE, OLED_CMD_SINGLE);
-}
-
-void OLED_DisplayChar(uint8_t x, uint8_t y, char ch) // åœ¨åæ ‡(x, y)å¤„æ˜¾ç¤ºASCIIå­—ç¬¦
-{
-    if (x >= OLED_WIDTH || y >= OLED_HEIGHT) //æ‰€ç»™åæ ‡è¶…è¿‡æ˜¾ç¤ºèŒƒå›´
-    {
+    if (x >= OLED_WIDTH || y >= OLED_HEIGHT) //Ëù¸ø×ø±ê³¬¹ıÏÔÊ¾·¶Î§
         return; 
+
+    uint16_t offset = x + (y / 8) * OLED_WIDTH; // ×ø±êÔÚ»º³åÇøÖĞµÄÆ«ÒÆ
+
+    // µãÁÁÏñËØ
+    OLED_WriteByte(OLED_CMD, 0x00); // ÃüÁî£ºĞ´ÈëÊı¾İ
+    OLED_WriteByte(OLED_CMD, offset % OLED_WIDTH); // ÁĞµØÖ·
+    OLED_WriteByte(OLED_CMD, 0xB0 + (y / 8)); // Ò³µØÖ·
+    OLED_WriteByte(OLED_CMD, (1 << (y % 8))); // Î»µØÖ·
+    OLED_WriteByte(OLED_CMD, 0xAF); // µãÁÁµ±Ç°ÏñËØ
+}
+
+void OLED_DisplayString(uint8_t x, uint8_t y, char *str) // ÔÚ×ø±ê(x, y)´¦ÏÔÊ¾×Ö·û´®
+{
+    if (x >= OLED_WIDTH || y >= OLED_HEIGHT) //Ëù¸ø×ø±ê³¬¹ıÏÔÊ¾·¶Î§
+        return; 
+
+    uint16_t offset = x + (y / 8) * OLED_WIDTH; // ×ø±êÔÚ»º³åÇøÖĞµÄÆ«ÒÆ
+
+    // µãÁÁÏñËØ
+    OLED_WriteByte(OLED_CMD, 0x00); // ÃüÁî£ºĞ´ÈëÊı¾İ
+    OLED_WriteByte(OLED_CMD, offset % OLED_WIDTH); // ÁĞµØÖ·
+    OLED_WriteByte(OLED_CMD, 0xB0 + (y / 8)); // Ò³µØÖ·
+    OLED_WriteByte(OLED_CMD, (1 << (y % 8))); // Î»µØÖ·
+
+    uint8_t data[OLED_WIDTH];
+    for (int i = 0; str[i] != '\0'; i++) 
+    {
+        char character = str[i];
+        for (int j = 0; j < 16; j++) 
+            data[i * 16 + j] = font8x16[character * 16 + j]; // 8*16×ÖÄ£Êı×é
+        HAL_I2C_Master_Transmit(&hi2c, OLED_DATA, &data[offset], strlen(str) * 8, HAL_MAX_DELAY);
     }
-
-    uint16_t offset = x + (y / 8) * OLED_WIDTH; // å­—ç¬¦åœ¨ç¼“å†²åŒºä¸­çš„åç§»
-
-    // æ˜¾ç¤ºå­—ç¬¦
-    OLED_WriteByte(0x00, OLED_CMD_SINGLE); // å‘½ä»¤ï¼šå†™å…¥æ•°æ®
-    OLED_WriteByte(offset % OLED_WIDTH, OLED_CMD_SINGLE); // åˆ—åœ°å€
-    OLED_WriteByte(0xB0 + (y / 8), OLED_CMD_SINGLE); // é¡µåœ°å€
-    OLED_WriteByte((1 << (y % 8)), OLED_CMD_SINGLE); // ä½åœ°å€
-    OLED_WriteByte(ch, OLED_CMD_STREAM); // å­—ç¬¦æ•°æ®
 }
