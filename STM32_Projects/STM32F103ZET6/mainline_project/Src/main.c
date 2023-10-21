@@ -127,8 +127,10 @@ int main(void)
   #endif /*RELAY_TEST*/
 
   #ifdef KEY_TEST
+    uint32_t duty = 0;
+    Breath_LED_Direction breath_dir = Breath_Positive;
     led_init();
-    key_Init();
+    key_init();
     TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);
   #endif /*KEY_TEST*/
 

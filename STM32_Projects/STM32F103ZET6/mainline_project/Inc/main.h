@@ -63,8 +63,8 @@ void Error_Handler(void);
 //在此处选择主函数实现的功能
 // #define UART_TEST
 // #define IIC_OLED_TEST
- #define RELAY_TEST
-// #define KEY_TEST
+// #define RELAY_TEST
+ #define KEY_TEST
 // #define MOTOR_TEST
 // #define LED_BREATH_TEST
 

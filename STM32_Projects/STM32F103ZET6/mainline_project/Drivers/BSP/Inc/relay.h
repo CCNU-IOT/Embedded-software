@@ -2,9 +2,9 @@
 #define __RELAY_H__
 #include "main.h"
 
-//使用PB7引脚接继电器的信号触发端
-#define RELAY_PIN   GPIO_PIN_7
-#define RELAY_PORT  GPIOB
+//使用PE0引脚接继电器的信号触发端
+#define RELAY_PIN   GPIO_PIN_0
+#define RELAY_PORT  GPIOE
 
 void Relay_Init(void);
 void Relay_On(void);
