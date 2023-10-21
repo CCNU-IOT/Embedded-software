@@ -82,7 +82,7 @@ int main(void)
   //led_init();
   //key_init();
 
-  //TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);//Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1msï¿½Ð¶ï¿½
+  //TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);//????????????????1?????????1??????1ms?§Ø?
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -106,7 +106,7 @@ int main(void)
     /* USER CODE END WHILE */
     if (uart_debug_rx_flag == 1)
     {
-      printf("æŽ¥æ”¶åˆ°çš„å­—ç¬¦ä¸º:\r\n");
+      printf("½ÓÊÕµ½µÄ×Ö·ûÎª:\r\n");
       HAL_UART_Transmit(&uart_debug_handle, (uint8_t *)uart_debug_rx_buffer, 1, 1000);
       while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != 1);
       uart_debug_rx_flag = 0;
@@ -115,7 +115,7 @@ int main(void)
     /*
     switch(key_scan())
     {
-      case KEY0_PRESSED_SHORT://ï¿½Ì°ï¿½KEY0ï¿½ï¿½LEDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+      case KEY0_PRESSED_SHORT://???KEY0??LED??????
       breath_led_brightness(&breath_dir, &duty);
       HAL_Delay(5);
       break;
@@ -128,7 +128,7 @@ int main(void)
       led_init();
       break;
       
-      case KEY0_PRESSED_LONG://ï¿½ï¿½ï¿½ï¿½KEY0ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LED
+      case KEY0_PRESSED_LONG://????KEY0???????????LED
       led_init();
       break;
 

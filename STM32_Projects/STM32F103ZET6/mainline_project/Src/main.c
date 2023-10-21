@@ -19,13 +19,38 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-#include "uart.h"
-// #include "oled.h"
-// #include "iic.h"
- #include "relay.h"
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
+/* USER CODE BEGIN Includes */
+#ifdef LED_BREATH_TEST
+  #include "led.h"
+  #include "pwm.h"
+#endif /*LED_BREATH_TEST*/
+
+#ifdef UART_TEST
+  #include "uart.h"
+#endif /*UART_TEST*/
+
+#ifdef IIC_OLED_TEST
+  #include "iic.h"
+  #include "oled.h"
+#endif /*IIC_OLED_TEST*/
+
+#ifdef KEY_TEST
+  #include "key.h"
+  #include "btim.h"
+  #include "led.h"
+#endif /*KEY_TEST*/
+
+#ifdef RELAY_TEST
+  #include "relay.h"
+#endif /*RELAY_TEST*/
+
+#ifdef MOTOR_TEST
+#include "motor.h"
+#include "uart.h"
+#include "encoder.h"
+#endif /*MOTOR_TEST*/
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,29 +113,61 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uart_debug_init();
-  //OLED_Init();
-  Relay_Init();
+
+  #ifdef UART_TEST
+    uart_debug_init();
+  #endif /*UART_TEST*/
+
+  #ifdef IIC_OLED_TEST
+    OLED_Init();
+  #endif /*IIC_OLED_TEST*/
+
+  #ifdef RELAY_TEST
+    Relay_Init();
+  #endif /*RELAY_TEST*/
+
+  #ifdef KEY_TEST
+    led_init();
+    key_Init();
+    TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);
+  #endif /*KEY_TEST*/
+
+  #ifdef LED_BREATH_TEST
+    uint32_t duty = 0;
+    Breath_LED_Direction breath_dir = Breath_Positive;
+    led_init();
+    breath_led_init();
+  #endif /*LED_BREATH_TEST*/
+
+  #ifdef MOTOR_TEST
+    bcd_motor_init(90);   /*直流无刷电机驱动初始化*/
+    bcd_encoder_init();   /*编码器初始化——测速*/
+    uart_debug_init(115200);  /*USART1初始化*/
+	  printf("Hello World\r\n");
+  #endif /*MOTOR_TEST*/
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  
-  // while (1)
-  // {
-  //   /* USER CODE END WHILE */
-  //   if (uart_debug_rx_flag == SET)
-  //   {
-  //     uart_debug_rx_flag = RESET;
-  //     printf("character:\r\n");
-  //     HAL_UART_Transmit(&uart_debug_handle, uart_debug_rx_buffer, 1, 1000);
-  //     while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != SET);
-  //     printf("\r\n");
-  //   }
-  //   /* USER CODE BEGIN 3 */
-  // }
 
-   while (1) {
+  /* USER CODE BEGIN WHILE */
+     while (1) 
+  {
+#ifdef UART_TEST
+
+    if (uart_debug_rx_flag == SET)
+    {
+      uart_debug_rx_flag = RESET;
+      printf("character:\r\n");
+      HAL_UART_Transmit(&uart_debug_handle, uart_debug_rx_buffer, 1, 1000);
+      while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != SET);
+      printf("\r\n");
+    }
+    
+#endif /*UART_TEST*/
+
+#ifdef RELAY_TEST
+
         // 打开继电器
         Relay_On();
         HAL_Delay(1000); // 延时1秒
@@ -118,10 +175,59 @@ int main(void)
         // 关闭继电器
         Relay_Off();
         HAL_Delay(1000); // 延时1秒
-    }
+        
+#endif /*RELAY_TEST*/
 
-  /* USER CODE END 3 */
+#ifdef KEY_TEST
+   switch(key_scan())
+    {
+      case KEY0_PRESSED_SHORT: // 短按KEY0开启LED呼吸灯
+      breath_led_brightness(&breath_dir, &duty);
+      HAL_Delay(5);
+      break;
+
+      case KEY1_PRESSED_SHORT:
+      led_init();
+      break;
+
+      case KEY_UP_PRESSED_SHORT:
+      led_init();
+      break;
+      
+      case KEY0_PRESSED_LONG: // 长按KEY0关闭LED呼吸灯
+      led_init();
+      break;
+
+      case KEY1_PRESSED_LONG:
+      led_init();
+      break;
+      
+      case KEY_UP_PRESSED_LONG:
+      led_init();
+      break;
+    }
+#endif /*KEY_TEST*/
+
+#ifdef LED_BREATH_TEST
+  breath_led_brightness(&breath_dir, &duty);
+  HAL_Delay(5);
+#endif /*LED_BREATH_TEST*/
+
+#ifdef MOTOR_TEST
+  printf("motor speed is: %f rpm.\r\n", bcd_motor_init_struct.speed);
+  HAL_Delay(1000);
+#endif /*MOTOR_TEST*/
+
+#ifdef IIC_OLED_TEST
+#endif /*IIC_OLED_TEST*/
+
 }
+    /* USER CODE END WHILE */
+}
+
+  /* USER CODE BEGIN 3 */
+  
+  /* USER CODE END 3 */
 
 /**
   * @brief System Clock Configuration
