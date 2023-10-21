@@ -19,13 +19,38 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-#include "uart.h"
-#include "pwm.h"
-#include "motor.h"
-#include "encoder.h"
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
+/* USER CODE BEGIN Includes */
+#ifdef LED_BREATH_TEST
+  #include "led.h"
+  #include "pwm.h"
+#endif /*LED_BREATH_TEST*/
+
+#ifdef UART_TEST
+  #include "uart.h"
+#endif /*UART_TEST*/
+
+#ifdef IIC_OLED_TEST
+  #include "iic.h"
+  #include "oled.h"
+#endif /*IIC_OLED_TEST*/
+
+#ifdef KEY_TEST
+  #include "key.h"
+  #include "btim.h"
+  #include "led.h"
+#endif /*KEY_TEST*/
+
+#ifdef RELAY_TEST
+  #include "relay.h"
+#endif /*RELAY_TEST*/
+
+#ifdef MOTOR_TEST
+#include "motor.h"
+#include "uart.h"
+#include "encoder.h"
+#endif /*MOTOR_TEST*/
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,23 +113,123 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  bcd_motor_init(90);   /*Áõ¥ÊµÅÊó†Âà∑ÁîµÊú∫È©±Âä®ÂàùÂßãÂåñ*/
-  bcd_encoder_init();   /*ÁºñÁ†ÅÂô®ÂàùÂßãÂåñ‚Äî‚ÄîÊµãÈÄü*/
-  uart_debug_init(115200);  /*USART1ÂàùÂßãÂåñ*/
-	printf("Hello World\r\n");
+
+  #ifdef UART_TEST
+    uart_debug_init();
+  #endif /*UART_TEST*/
+
+  #ifdef IIC_OLED_TEST
+    OLED_Init();
+  #endif /*IIC_OLED_TEST*/
+
+  #ifdef RELAY_TEST
+    Relay_Init();
+  #endif /*RELAY_TEST*/
+
+  #ifdef KEY_TEST
+    uint32_t duty = 0;
+    Breath_LED_Direction breath_dir = Breath_Positive;
+    led_init();
+    key_init();
+    TIM6_init(1 - 1 , SystemCoreClock / 1000 - 1);
+  #endif /*KEY_TEST*/
+
+  #ifdef LED_BREATH_TEST
+    uint32_t duty = 0;
+    Breath_LED_Direction breath_dir = Breath_Positive;
+    led_init();
+    breath_led_init();
+  #endif /*LED_BREATH_TEST*/
+
+  #ifdef MOTOR_TEST
+    bcd_motor_init(90);   /*÷±¡˜ŒﬁÀ¢µÁª˙«˝∂Ø≥ı ºªØ*/
+    bcd_encoder_init();   /*±‡¬Î∆˜≥ı ºªØ°™°™≤‚ÀŸ*/
+    uart_debug_init(115200);  /*USART1≥ı ºªØ*/
+	  printf("Hello World\r\n");
+  #endif /*MOTOR_TEST*/
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
+
   /* USER CODE BEGIN WHILE */
-  while (1)
+     while (1) 
   {
-    /* USER CODE END WHILE */
-    printf("motor speed is: %f rpm.\r\n", bcd_motor_init_struct.speed);
-    HAL_Delay(1000);
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+#ifdef UART_TEST
+
+    if (uart_debug_rx_flag == SET)
+    {
+      uart_debug_rx_flag = RESET;
+      printf("character:\r\n");
+      HAL_UART_Transmit(&uart_debug_handle, uart_debug_rx_buffer, 1, 1000);
+      while (__HAL_UART_GET_FLAG(&uart_debug_handle, UART_FLAG_TC) != SET);
+      printf("\r\n");
+    }
+    
+#endif /*UART_TEST*/
+
+#ifdef RELAY_TEST
+
+        // ¥Úø™ºÃµÁ∆˜
+        Relay_On();
+        HAL_Delay(1000); // —” ±1√Î
+
+        // πÿ±’ºÃµÁ∆˜
+        Relay_Off();
+        HAL_Delay(1000); // —” ±1√Î
+        
+#endif /*RELAY_TEST*/
+
+#ifdef KEY_TEST
+   switch(key_scan())
+    {
+      case KEY0_PRESSED_SHORT: // ∂Ã∞¥KEY0ø™∆ÙLED∫ÙŒ¸µ∆
+      breath_led_brightness(&breath_dir, &duty);
+      HAL_Delay(5);
+      break;
+
+      case KEY1_PRESSED_SHORT:
+      led_init();
+      break;
+
+      case KEY_UP_PRESSED_SHORT:
+      led_init();
+      break;
+      
+      case KEY0_PRESSED_LONG: // ≥§∞¥KEY0πÿ±’LED∫ÙŒ¸µ∆
+      led_init();
+      break;
+
+      case KEY1_PRESSED_LONG:
+      led_init();
+      break;
+      
+      case KEY_UP_PRESSED_LONG:
+      led_init();
+      break;
+    }
+#endif /*KEY_TEST*/
+
+#ifdef LED_BREATH_TEST
+  breath_led_brightness(&breath_dir, &duty);
+  HAL_Delay(5);
+#endif /*LED_BREATH_TEST*/
+
+#ifdef MOTOR_TEST
+  printf("motor speed is: %f rpm.\r\n", bcd_motor_init_struct.speed);
+  HAL_Delay(1000);
+#endif /*MOTOR_TEST*/
+
+#ifdef IIC_OLED_TEST
+#endif /*IIC_OLED_TEST*/
+
 }
+    /* USER CODE END WHILE */
+}
+
+  /* USER CODE BEGIN 3 */
+  
+  /* USER CODE END 3 */
 
 /**
   * @brief System Clock Configuration

@@ -10,7 +10,7 @@
       <TargetName>mainline_project</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -635,11 +635,6 @@
           <GroupName>Drivers/BSP</GroupName>
           <Files>
             <File>
-              <FileName>encoder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP\Src\encoder.c</FilePath>
-            </File>
-            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\Src\led.c</FilePath>
@@ -663,6 +658,21 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP\Src\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>btim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\btim.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\key.c</FilePath>
+            </File>
+            <File>
+              <FileName>relay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\Src\relay.c</FilePath>
             </File>
           </Files>
         </Group>
