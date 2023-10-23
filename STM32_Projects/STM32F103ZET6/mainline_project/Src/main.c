@@ -99,8 +99,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    printf("motor speed is: %f rpm.\r\n", bcd_motor_init_struct.speed);
-    HAL_Delay(1000);
+    static uint32_t count = 0;
+    printf("%d.motor speed is: %f rpm.\r\n", ++count, bcd_motor_init_struct.speed);
+    HAL_Delay(2000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

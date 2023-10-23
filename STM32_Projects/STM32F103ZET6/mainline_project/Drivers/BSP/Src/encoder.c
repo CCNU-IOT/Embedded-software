@@ -33,11 +33,11 @@ void bcd_encoder_init(void)
 
     /*编码器接口配置*/
     encoder_tim_init_struct.EncoderMode = TIM_ENCODERMODE_TI12;
-    encoder_tim_init_struct.IC1Filter = 10;
+    encoder_tim_init_struct.IC1Filter = 0;
     encoder_tim_init_struct.IC1Polarity = TIM_ENCODERINPUTPOLARITY_RISING;
     encoder_tim_init_struct.IC1Prescaler = TIM_ICPSC_DIV1;
     encoder_tim_init_struct.IC1Selection = TIM_ICSELECTION_DIRECTTI;
-    encoder_tim_init_struct.IC2Filter = 10;
+    encoder_tim_init_struct.IC2Filter = 0;
     encoder_tim_init_struct.IC2Polarity = TIM_ENCODERINPUTPOLARITY_RISING;
     encoder_tim_init_struct.IC2Prescaler = TIM_ICPSC_DIV1;
     encoder_tim_init_struct.IC2Selection = TIM_ICSELECTION_DIRECTTI;
