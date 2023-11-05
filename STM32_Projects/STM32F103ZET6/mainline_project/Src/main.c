@@ -153,17 +153,15 @@ int main(void)
   /* Infinite loop */
 
   /* USER CODE BEGIN WHILE */
-     while (1) 
-  {
-<<<<<<< HEAD
-    /* USER CODE END WHILE */
-    static uint32_t count = 0;
-    printf("%d.motor speed is: %f rpm.\r\n", ++count, bcd_motor_init_struct.speed);
-    HAL_Delay(2000);
-    /* USER CODE BEGIN 3 */
-  }
+  //    while (1) 
+  // {
+  //   /* USER CODE END WHILE */
+  //    static uint32_t count = 0;
+  //    printf("%d.motor speed is: %f rpm.\r\n", ++count, bcd_motor_init_struct.speed);
+  //    HAL_Delay(2000);
+  //   /* USER CODE BEGIN 3 */
+  // }
   /* USER CODE END 3 */
-=======
 #ifdef UART_TEST
 
     if (uart_debug_rx_flag == SET)
@@ -225,17 +223,19 @@ int main(void)
 #endif /*LED_BREATH_TEST*/
 
 #ifdef MOTOR_TEST
-  printf("motor speed is: %f rpm.\r\n", bcd_motor_init_struct.speed);
-  HAL_Delay(1000);
+  // printf("motor speed is: %f rpm.\r\n", bcd_motor_init_struct.speed);
+  // HAL_Delay(1000);
+    static uint32_t count = 0;
+    printf("%d.motor speed is: %f rpm.\r\n", ++count, bcd_motor_init_struct.speed);
+    HAL_Delay(2000);
 #endif /*MOTOR_TEST*/
 
 #ifdef IIC_OLED_TEST
 #endif /*IIC_OLED_TEST*/
 
->>>>>>> origin/main
 }
     /* USER CODE END WHILE */
-}
+
 
   /* USER CODE BEGIN 3 */
   
