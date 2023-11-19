@@ -4,28 +4,28 @@
 
 void key_init(void)                                 /*初始化按键*/
 {
-    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef gpio_init_struct;
 
     __HAL_RCC_GPIOA_CLK_ENABLE();                   // 使能GPIOA时钟
     __HAL_RCC_GPIOE_CLK_ENABLE();                   // 使能GPIOE时钟
 
-    GPIO_InitStruct.Pin = KEY_UP_PIN;               // 指定要配置的GPIO引脚为KEY_UP的引脚
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;         // 设置引脚工作模式为输入模式
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;           // 设置下拉电阻
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;        // 设置工作速度为高速
-    HAL_GPIO_Init(KEY_UP_PORT, &GPIO_InitStruct);   // 初始化KEY_UP_PORT端口
+    gpio_init_struct.Pin = KEY_UP_PIN;               // 指定要配置的GPIO引脚为KEY_UP的引脚
+    gpio_init_struct.Mode = GPIO_MODE_INPUT;         // 设置引脚工作模式为输入模式
+    gpio_init_struct.Pull = GPIO_PULLDOWN;           // 设置下拉电阻
+    gpio_init_struct.Speed = GPIO_SPEED_HIGH;        // 设置工作速度为高速
+    HAL_GPIO_Init(KEY_UP_PORT, &gpio_init_struct);   // 初始化KEY_UP_PORT端口
 
-    GPIO_InitStruct.Pin = KEY0_PIN;                 // 指定要配置的GPIO引脚为KEY0的引脚
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;         // 设置引脚工作模式为输入模式
-    GPIO_InitStruct.Pull = GPIO_PULLUP;             // 设置上拉电阻
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;        // 设置工作速度为高速
-    HAL_GPIO_Init(KEY0_PORT, &GPIO_InitStruct);     // 初始化KEY0_PORT端口
+    gpio_init_struct.Pin = KEY0_PIN;                 // 指定要配置的GPIO引脚为KEY0的引脚
+    gpio_init_struct.Mode = GPIO_MODE_INPUT;         // 设置引脚工作模式为输入模式
+    gpio_init_struct.Pull = GPIO_PULLUP;             // 设置上拉电阻
+    gpio_init_struct.Speed = GPIO_SPEED_HIGH;        // 设置工作速度为高速
+    HAL_GPIO_Init(KEY0_PORT, &gpio_init_struct);     // 初始化KEY0_PORT端口
 
-    GPIO_InitStruct.Pin = KEY1_PIN;                 // 指定要配置的GPIO引脚为KEY1的引脚
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;         // 设置引脚工作模式为输入模式
-    GPIO_InitStruct.Pull = GPIO_PULLUP;             // 设置上拉电阻
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;        // 设置工作速度为高速
-    HAL_GPIO_Init(KEY1_PORT, &GPIO_InitStruct);     // 初始化KEY1_PORT端口
+    gpio_init_struct.Pin = KEY1_PIN;                 // 指定要配置的GPIO引脚为KEY1的引脚
+    gpio_init_struct.Mode = GPIO_MODE_INPUT;         // 设置引脚工作模式为输入模式
+    gpio_init_struct.Pull = GPIO_PULLUP;             // 设置上拉电阻
+    gpio_init_struct.Speed = GPIO_SPEED_HIGH;        // 设置工作速度为高速
+    HAL_GPIO_Init(KEY1_PORT, &gpio_init_struct);     // 初始化KEY1_PORT端口
 }
 
 uint8_t key_get_status()

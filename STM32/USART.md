@@ -268,9 +268,66 @@
     
     } UART_HandleTypeDef;
     ```
-
+    ```c
+    //翻译：
+    typedef struct __UART_HandleTypeDef
+    {
+      USART_TypeDef                 *Instance;        /*!< UART 寄存器基地址             */
+    
+      UART_InitTypeDef              Init;             /*!< UART 通信参数                  */
+    
+      const uint8_t                 *pTxBuffPtr;      /*!< 指向 UART 发送缓冲区的指针    */
+    
+      uint16_t                      TxXferSize;       /*!< UART 发送传输大小             */
+    
+      __IO uint16_t                 TxXferCount;      /*!< UART 发送传输计数器           */
+    
+      uint8_t                       *pRxBuffPtr;      /*!< 指向 UART 接收缓冲区的指针    */
+    
+      uint16_t                      RxXferSize;       /*!< UART 接收传输大小             */
+    
+      __IO uint16_t                 RxXferCount;      /*!< UART 接收传输计数器           */
+    
+      __IO HAL_UART_RxTypeTypeDef ReceptionType;      /*!< 正在进行的接收类型            */
+    
+      __IO HAL_UART_RxEventTypeTypeDef RxEventType;   /*!< 接收事件的类型                */
+    
+      DMA_HandleTypeDef             *hdmatx;          /*!< UART 发送 DMA 句柄参数        */
+    
+      DMA_HandleTypeDef             *hdmarx;          /*!< UART 接收 DMA 句柄参数        */
+    
+      HAL_LockTypeDef               Lock;             /*!< 锁对象                        */
+    
+      __IO HAL_UART_StateTypeDef    gState;           /*!< 与全局句柄管理以及发送操作相关的 UART 状态信息
+                                                           此参数可以是 @ref HAL_UART_StateTypeDef 中的值 */
+    
+      __IO HAL_UART_StateTypeDef    RxState;          /*!< 与接收操作相关的 UART 状态信息
+                                                           此参数可以是 @ref HAL_UART_StateTypeDef 中的值 */
+    
+      __IO uint32_t                 ErrorCode;        /*!< UART 错误代码                  */
+    
+    #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
+      void (* TxHalfCpltCallback)(struct __UART_HandleTypeDef *huart);        /*!< UART 发送一半完成回调函数       */
+      void (* TxCpltCallback)(struct __UART_HandleTypeDef *huart);            /*!< UART 发送完成回调函数           */
+      void (* RxHalfCpltCallback)(struct __UART_HandleTypeDef *huart);        /*!< UART 接收一半完成回调函数       */
+      void (* RxCpltCallback)(struct __UART_HandleTypeDef *huart);            /*!< UART 接收完成回调函数           */
+      void (* ErrorCallback)(struct __UART_HandleTypeDef *huart);             /*!< UART 错误回调函数               */
+      void (* AbortCpltCallback)(struct __UART_HandleTypeDef *huart);         /*!< UART 终止完成回调函数           */
+      void (* AbortTransmitCpltCallback)(struct __UART_HandleTypeDef *huart); /*!< UART 终止发送完成回调函数       */
+      void (* AbortReceiveCpltCallback)(struct __UART_HandleTypeDef *huart);  /*!< UART 终止接收完成回调函数       */
+      void (* WakeupCallback)(struct __UART_HandleTypeDef *huart);            /*!< UART 唤醒回调函数               */
+      void (* RxEventCallback)(struct __UART_HandleTypeDef *huart, uint16_t Pos); /*!< UART 接收事件回调函数         */
+    
+      void (* MspInitCallback)(struct __UART_HandleTypeDef *huart);           /*!< UART Msp 初始化回调函数         */
+      void (* MspDeInitCallback)(struct __UART_HandleTypeDef *huart);         /*!< UART Msp 反初始化回调函数       */
+    #endif  /* USE_HAL_UART_REGISTER_CALLBACKS */
+    
+    } UART_HandleTypeDef;
+    
+    ```
+    
   - 对于初始化结构体来讲，只需要关心`USART_TypeDef *Instance;`和`UART_InitTypeDef Init;`，如果使用**DMA**，需要配置**DMA**的参数。
-
+  
   - ```c
     uart_debug_handle.Instance = USART1;						/*启用USART1*/
     uart_debug_handle.Init.BaudRate = 115200;					/*波特率设置115200baud*/
@@ -290,7 +347,31 @@
 
 - `void HAL_UART_MspInit(UART_HandleTypeDef *huart)`
 
-- ```c
+  ```c
+  void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+  {
+      GPIO_InitTypeDef gpio_init_struct;
+      if (huart->Instance == UART_DEBUG)
+      {
+          __HAL_RCC_USART1_CLK_ENABLE();
+          __HAL_RCC_GPIOA_CLK_ENABLE();
+          __HAL_RCC_AFIO_CLK_ENABLE();
+  
+          gpio_init_struct.Pin = UART_DEBUG_TX_GPIO_PIN;
+          gpio_init_struct.Mode = GPIO_MODE_AF_PP;                                /*复用推挽输出*/
+          gpio_init_struct.Pull = GPIO_PULLUP;                                    /*发送引脚需要设置成上拉，因为空闲输出高电平*/
+          gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
+          HAL_GPIO_Init(UART_DEBUG_TX_GPIO_PORT, &gpio_init_struct);
+  
+          gpio_init_struct.Pin = UART_DEBUG_RX_GPIO_PIN;
+          gpio_init_struct.Mode = GPIO_MODE_AF_INPUT;                             /*复用推挽输入*/
+          gpio_init_struct.Pull = GPIO_NOPULL;                                    /*输入引脚不需要设置上下拉*/
+          gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;                          /*输入引脚不需要设置速度，但是为了看起来好看一点，还是可以设置的(但是没用)*/
+          HAL_GPIO_Init(UART_DEBUG_RX_GPIO_PORT, &gpio_init_struct);
+  
+          HAL_NVIC_SetPriority(USART1_IRQn, 3, 3);                                /*设置中断优先级*/
+          HAL_NVIC_EnableIRQ(USART1_IRQn);                                        /*将中断号在NVIC处挂号*/
+  
+      }
+  }
   ```
-
-- 

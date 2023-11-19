@@ -1,23 +1,23 @@
 #include "iic.h"
 
 I2C_HandleTypeDef hi2c;
-GPIO_InitTypeDef GPIO_InitStruct;
+GPIO_InitTypeDef gpio_init_struct;
 
 void I2C_Init() 
 {
     __HAL_RCC_GPIOB_CLK_ENABLE(); // 使能GPIOB时钟（即SCL、SDA引脚时钟）
     
-    GPIO_InitStruct.Pin = GPIO_PIN_6;// SCL引脚
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; // 开漏输出模式
-    GPIO_InitStruct.Pull = GPIO_PULLUP; // 上拉
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH; // 高速
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    gpio_init_struct.Pin = GPIO_PIN_6;// SCL引脚
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP; // 开漏输出模式
+    gpio_init_struct.Pull = GPIO_PULLUP; // 上拉
+    gpio_init_struct.Speed = GPIO_SPEED_HIGH; // 高速
+    HAL_GPIO_Init(GPIOB, &gpio_init_struct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_7;// SDA引脚
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD; // 开漏输出模式
-    GPIO_InitStruct.Pull = GPIO_PULLUP; // 上拉
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH; // 高速
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    gpio_init_struct.Pin = GPIO_PIN_7;// SDA引脚
+    gpio_init_struct.Mode = GPIO_MODE_AF_OD; // 开漏输出模式
+    gpio_init_struct.Pull = GPIO_PULLUP; // 上拉
+    gpio_init_struct.Speed = GPIO_SPEED_HIGH; // 高速
+    HAL_GPIO_Init(GPIOB, &gpio_init_struct);
 
     hi2c.Instance = I2C1;
     hi2c.Init.ClockSpeed = 400000; // 设置 I2C 总线速度为 400 kHz

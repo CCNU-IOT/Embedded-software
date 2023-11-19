@@ -44,7 +44,7 @@
       - ![9eaf9734459b6422b6a50977da6236ae7622ef3d](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/9eaf9734459b6422b6a50977da6236ae7622ef3d.svg)
       - **展开**：
       - ![3ff6bfb695bad62cb26a2f8c5fa2d565431e5375](https://nickaljy-pictures.oss-cn-hangzhou.aliyuncs.com/3ff6bfb695bad62cb26a2f8c5fa2d565431e5375.svg)
-      - 通常，$y_{min} = 0$，$y_{max} = 3.3/5v$，因此**平均值**仅和**占空比**有关。
+      - 通常，$y_{min} = 0$，$y_{max} = 3.3V/5V$，因此**平均值**仅和**占空比**有关。
 - 在使用**PWM**技术的时候，首先确定`Frequency`，其次确定`Duty cycle`。
 
 #### 1.3 PWM的实际应用：
